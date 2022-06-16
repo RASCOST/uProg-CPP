@@ -20,7 +20,21 @@ public:
 };
 
 struct Flash {
+private:
+	std::wstring flashSize;
+	std::wstring pageSize;
+	std::vector<std::uint8_t> pcWord;
+	std::uint16_t numberPages;
+	std::vector<std::uint8_t> pcPage;
+	std::uint16_t pcMsb;
 
+public:
+	void setFlashSize(std::wstring flashsize);
+	void setPageSize(std::wstring pagesize);
+	void setPcWord(TJSONArray* array);
+	void setNumberPages(std::uint16_t pages);
+	void setPcPage(TJSONArray* array);
+	void setPcMsb(std::uint16_t pcmsb);
 };
 
 struct EEPROM {
@@ -56,6 +70,7 @@ private:
 	std::wstring name;
 	std::unique_ptr<Architecture> architecture;
 
+    void setFuseBytes(TJSONObject* object);
 	void readJSONFile();
 
 public:

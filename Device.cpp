@@ -51,6 +51,24 @@ const std::wstring Device::getDeviceName() {
 	return name;
 }
 
+void Device::setFuseBytes(TJSONObject* object) {
+	TJSONObject* fuseBytes = (TJSONObject*) TJSONObject::ParseJSONValue(object->GetValue("FuseBytes")->ToString());
+
+	TJSONArray* extended = (TJSONArray*) TJSONObject::ParseJSONValue(fuseBytes->GetValue("extended")->ToString());
+	architecture->fuseBytes->setExtended(extended);
+
+	TJSONArray* high = (TJSONArray*) TJSONObject::ParseJSONValue(fuseBytes->GetValue("high")->ToString());
+	architecture->fuseBytes->setHigh(high);
+
+	TJSONArray* low = (TJSONArray*) TJSONObject::ParseJSONValue(fuseBytes->GetValue("low")->ToString());
+	architecture->fuseBytes->setLow(low);
+
+	delete fuseBytes;
+	delete extended;
+	delete high;
+	delete low;
+}
+
 void Device::readJSONFile() {
 	try {
 		std::unique_ptr<TStringStream> jsonStream(new TStringStream);
@@ -65,13 +83,7 @@ void Device::readJSONFile() {
 		architecture->setLockBits(lockBits);
 
 		// Fuse Bytes
-		TJSONObject* fuseBytes = (TJSONObject*) TJSONObject::ParseJSONValue(device->GetValue("FuseBytes")->ToString());
-		TJSONArray* extended = (TJSONArray*) TJSONObject::ParseJSONValue(fuseBytes->GetValue("extended")->ToString());
-		architecture->fuseBytes->setExtended(extended);
-		TJSONArray* high = (TJSONArray*) TJSONObject::ParseJSONValue(fuseBytes->GetValue("high")->ToString());
-		architecture->fuseBytes->setHigh(high);
-		TJSONArray* low = (TJSONArray*) TJSONObject::ParseJSONValue(fuseBytes->GetValue("low")->ToString());
-		architecture->fuseBytes->setLow(low);
+        setFuseBytes(device);
 
 		// Signature Bytes Address
 		TJSONArray* signatureBytesAddress = (TJSONArray*) TJSONObject::ParseJSONValue(device->GetValue("SignatureBytesAddress")->ToString());
@@ -84,10 +96,6 @@ void Device::readJSONFile() {
 		delete jsonFile;
 		delete device;
 		delete lockBits;
-		delete fuseBytes;
-		delete extended;
-		delete high;
-		delete low;
 		delete signatureBytesAddress;
 		delete signatureBytes;
 
