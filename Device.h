@@ -8,10 +8,12 @@
 #include <System.Classes.hpp>
 
 struct FuseBytes {
+private:
 	std::vector<std::wstring> extended;
 	std::array<std::wstring, 8> high;
 	std::array<std::wstring, 8> low;
 
+public:
 	void setExtended(TJSONArray* array);
 	void setHigh(TJSONArray* array);
 	void setLow(TJSONArray* array);
@@ -27,8 +29,8 @@ struct EEPROM {
 
 struct Architecture {
 	std::unique_ptr<FuseBytes> fuseBytes = std::make_unique<FuseBytes>();
-	std::unique_ptr<Flash> flash;
-	std::unique_ptr<EEPROM> eeprom;
+	std::unique_ptr<Flash> flash = std::make_unique<Flash>();;
+	std::unique_ptr<EEPROM> eeprom = std::make_unique<EEPROM>();;
 	std::vector<std::wstring> LockBits;
 	std::array<std::uint8_t, 3> Signature_Bytes_Address;
 	std::array<std::uint8_t, 3> Signature_Bytes;
