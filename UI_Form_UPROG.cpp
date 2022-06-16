@@ -11,13 +11,76 @@
 TForm1 *Form1;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
-	: TForm(Owner)
+	: TForm(Owner), avrprog(CreateProgrammer(*this))
 {
 	FT_STATUS status;
 	DWORD nums;
 
+	OpenDialogFile->Filter = "Hex files (*.hex)|*.HEX";
+
 	status = FT_CreateDeviceInfoList(&nums);
+	std::wstring message = L">> ";
+
+	// check if device connected
+	if (nums == 1) {
+		message += L"Detected Device: 1";
+	} else if (nums == 0) {
+		message += L"Detected Device: 0! Please connect your device.";
+	} else {
+		message += L"Detected more than one device! Please remove your devices and try again.";
+    }
+
+	updateConsole(message.c_str());
+
+	if (nums == 1) {
+		if (avrprog->programmingEnable())
+            updateConsole(L">> Device Synchronized");
+    }
+}
+//---------------------------------------------------------------------------
+
+void TForm1::updateConsole(const std::wstring& message) {
+	MemoConsole->Lines->Append(message.c_str());
 }
 
+
+
+void __fastcall TForm1::BtnOpenFileClick(TObject *Sender)
+{
+	if (OpenDialogFile->Execute()) {
+		if (FileExists(OpenDialogFile->FileName)) {
+            updateConsole((L">> File: " + OpenDialogFile->FileName).c_str());
+		} else {
+            throw(Exception("File does not exixts."));
+        }
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BtnReadFBClick(TObject *Sender)
+{
+	updateConsole(L">> Reading Lock Bits.");
+	avrprog->readLBits();
+	updateLockBits();
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::BtnReadFBHClick(TObject *Sender)
+{
+	avrprog->readFsBits(FUSE_BYTES::HIGH);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BtnReadFBLClick(TObject *Sender)
+{
+	avrprog->readFsBits(FUSE_BYTES::LOW);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BtnReadFSEClick(TObject *Sender)
+{
+    avrprog->readFsBits(FUSE_BYTES::EXTENDED);
+}
 //---------------------------------------------------------------------------
 

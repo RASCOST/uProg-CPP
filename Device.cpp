@@ -1,173 +1,99 @@
-#include "Device.h"
+﻿#include "Device.h"
 
-/// <summary>
-/// 
-/// </summary>
-Device::Device(std::string name)
-{
-	setName(name);
-	memory = new Memory();
+void FuseBytes::setExtended(TJSONArray* array) {
+	for (uint8_t idx = 0; idx < array->Count; idx++)
+		extended.push_back(array->Items[idx]->ToString().c_str());
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="path"></param>
-void Device::setPath(std::string path)
-{
-	this->path = path;
+void FuseBytes::setHigh(TJSONArray* array) {
+	for (uint8_t idx = 0; idx < array->Count; idx++)
+		high[idx] =  array->Items[idx]->ToString().c_str();
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="name"></param>
-void Device::setName(std::string name)
-{
-	this->name = name;
+void FuseBytes::setLow(TJSONArray* array) {
+	for (uint8_t idx = 0; idx < array->Count; idx++)
+		low[idx] =  array->Items[idx]->ToString().c_str();
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="path"></param>
-/// <param name="strToSearch"></param>
-/// <returns></returns>
-std::string Device::readFile(std::string path, std::string strToSearch)
-{
-	std::string line;
-	std::ifstream file(path);
-	unsigned int charPos = 0;
+/************************
+*
+************************/
+void Architecture::setLockBits(TJSONArray* lockBits) {
+	for (uint8_t lbit = 0; lbit < lockBits->Count; lbit++)
+		LockBits.push_back(lockBits->Items[lbit]->ToString().c_str());
+}
 
-	//std::cout << strToSearch << "\n";
-	while (!file.eof())
-	{
-		getline(file, line);
+void Architecture::setSignatureBytesAddress(TJSONArray* address) {
+	for (std::uint8_t position = 0; position < address->Count; position++)
+		Signature_Bytes_Address[position] = std::stoi(address->Items[position]->ToString().c_str());
+}
 
-		if (line.find(strToSearch) != std::string::npos)
-		{
-			std::cout << line << '\n';
-			break;
-		}
+void Architecture::setSignatureBytes(TJSONArray* signature) {
+	for (std::uint8_t position = 0; position < signature->Count; position++)
+		Signature_Bytes[position] = std::stoi(signature->Items[position]->ToString().c_str());
+}
+
+/****************************
+*
+****************************/
+Device::Device(const std::wstring name) {
+
+	architecture = std::make_unique<Architecture>();
+	setDeviceName(name);
+	readJSONFile();
+}
+
+void Device::setDeviceName(const std::wstring device) {
+	name = device;
+}
+
+const std::wstring Device::getDeviceName() {
+	return name;
+}
+
+void Device::readJSONFile() {
+	try {
+		std::unique_ptr<TStringStream> jsonStream(new TStringStream);
+		std::wstring file = L"devices/" + getDeviceName() + L".json";
+		jsonStream->LoadFromFile(file.c_str());
+
+		TJSONObject* jsonFile = (TJSONObject*)TJSONObject::ParseJSONValue(jsonStream->DataString, false, true);
+		TJSONObject* device = (TJSONObject*) TJSONObject::ParseJSONValue(jsonFile->GetValue(this->name.c_str())->ToString());
+
+		// Lock Bits
+		TJSONArray* lockBits = (TJSONArray*) TJSONObject::ParseJSONValue(device->GetValue("LockBits")->ToString());
+		architecture->setLockBits(lockBits);
+
+		// Fuse Bytes
+		TJSONObject* fuseBytes = (TJSONObject*) TJSONObject::ParseJSONValue(device->GetValue("FuseBytes")->ToString());
+		TJSONArray* extended = (TJSONArray*) TJSONObject::ParseJSONValue(fuseBytes->GetValue("extended")->ToString());
+		architecture->fuseBytes->setExtended(extended);
+		TJSONArray* high = (TJSONArray*) TJSONObject::ParseJSONValue(fuseBytes->GetValue("high")->ToString());
+		architecture->fuseBytes->setHigh(high);
+		TJSONArray* low = (TJSONArray*) TJSONObject::ParseJSONValue(fuseBytes->GetValue("low")->ToString());
+		architecture->fuseBytes->setLow(low);
+
+		// Signature Bytes Address
+		TJSONArray* signatureBytesAddress = (TJSONArray*) TJSONObject::ParseJSONValue(device->GetValue("SignatureBytesAddress")->ToString());
+		architecture->setSignatureBytesAddress(signatureBytesAddress);
+
+		// Signature Bytes
+		TJSONArray* signatureBytes = (TJSONArray*) TJSONObject::ParseJSONValue(device->GetValue("SignatureBytes")->ToString());
+		architecture->setSignatureBytes(signatureBytes);
+
+		delete jsonFile;
+		delete device;
+		delete lockBits;
+		delete fuseBytes;
+		delete extended;
+		delete high;
+		delete low;
+		delete signatureBytesAddress;
+		delete signatureBytes;
+
 	}
-
-	file.close();
-
-	return line;
-}
-
-/// <summary>
-/// 
-/// </summary>
-/// <param name="str"></param>
-/// <param name="c"></param>
-/// <returns></returns>
-unsigned int Device::searchPosition(std::string str, char c)
-{
-	return str.find(c) + 1;
-}
-
-/// <summary>
-/// 
-/// </summary>
-void Device::setSignatureBytesAddress()
-{
-	std::string str = readFile(this->path, "Signature_Address");
-	unsigned int position = searchPosition(str, '=');
-	std::string number = "";
-	std::cout << str.at(position) << "\n";
-	for (int index = 0; index < 3; index++)
-	{
-		
-		while (str.at(position) != ']')
-		{
-			
-			if ((str.at(position) != ',') && (str.at(position) == '['))
-			{
-				std::cout << str.at(position) << "\n";
-				number += str.at(position);
-				position++;
-			}
-			else
-			{
-				position++;
-				break;
-			}
-		}
-		//std::cout << std::stoi(number) << "\n";
-		this->memory->Signature_Bytes_Address[index] = std::stoi(number, 0, 16);
-		number = "";
+	catch( const std::exception& e) {
+         std::cout << e.what() << std::endl;
 	}
 }
 
-/// <summary>
-/// 
-/// </summary>
-void Device::setSignatureBytes()
-{
-	std::string str = readFile(this->path, "Signature_Bytes");
-	//std::cout << str << '\n';
-	unsigned int position = searchPosition(str, '=');
-	std::string number = "";
-
-	for (int index = 0; index < 3; index++)
-	{
-		while (str.at(position) != ']')
-		{
-			if (str.at(position) != ',')
-			{
-				number += str.at(position);
-				position++;
-			}
-			else
-			{
-				position++;
-				break;
-			}
-		}
-		//std::cout << std::stoi(number) << "\n";
-		this->memory->Signature_Bytes[index] = std::stoi(number, 0, 16);
-		number = "";
-	}
-}
-
-/// <summary>
-/// 
-/// </summary>
-void Device::setFlashSize()
-{
-	std::string str = readFile(this->path, "Flash_Size");
-	//std::cout << str << '\n';
-	unsigned int position = searchPosition(str, '=');
-	std::string number = std::string(1,str.at(position));
-	this->memory->Flash_Size = std::stoi(number);
-}
-
-// Tests
-std::string Device::getDeviceName()
-{
-	return this->name;
-}
-
-/// <summary>
-/// 
-/// </summary>
-/// <returns></returns>
-std::array<unsigned int, 3> Device::getSignatureBytesAddress()
-{
-	return this->memory->Signature_Bytes_Address;
-}
-
-/// <summary>
-/// 
-/// </summary>
-/// <returns></returns>
-std::array<unsigned int, 3> Device::getSignatureBytes()
-{
-	return this->memory->Signature_Bytes;
-}
-
-unsigned int Device::getFlashSize()
-{
-	return this->memory->Flash_Size;
-}

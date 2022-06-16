@@ -1,0 +1,30 @@
+{
+	"ATtiny45": {
+		"LockBits": [ 'LB2', 'LB1' ],
+		"FuseBytes": {
+			"extended": [ 'SELFPRGEN' ],
+			"high": [ 'BODLEVEL0', 'BODLEVEL1', 'BODLEVEL2', 'EESAVE', 'WDTON', 'SPIEN', 'DWEN', 'RSTDISBL'],
+			"low": [ 'CKSEL0', 'CKSEL1', 'CKSEL2', 'CKSEL3', 'SUT0', 'SUT1', 'CKOUT', 'CKDIV8']
+		},
+		"SignatureBytesAddress": [ 0x00, 0x01, 0x02 ],
+		"SignatureBytes": [ 0x1E, 0x92, 0x06 ],
+		"CalibrationBytesAddress": [ 0x03, 0x04 ],
+		"CalibrationBytes": [],
+		"Flash": {
+			"FlashSize": "2K",
+			"PageSize": "32words",
+			"PCWORD": [ 0, 1, 2, 3, 4 ],
+			"NumberPages": 64,
+			"PCPAGE": [ 5, 6, 7, 8, 9, 10 ],
+			"PCMSB": 10
+		},
+		"EEPROM": {
+			"EEPROMSize": "256bytes",
+			"PageSize": "4bytes",
+			"PCWORD": [ 0, 1 ],
+			"NumberPages": 64,
+			"PCPAGE": [ 2, 3, 4, 5, 6, 7 ],
+			"PCMSB": 7
+		}	
+	}
+}

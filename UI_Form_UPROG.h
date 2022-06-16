@@ -15,18 +15,20 @@
 #include <FMX.Edit.hpp>
 #include <FMX.StdCtrls.hpp>
 #include <FMX.TabControl.hpp>
+
+#include "IProgrammer.h"
+#include "AVRProgrammer.h"
+#include <FMX.ListBox.hpp>
+#include <FMX.Menus.hpp>
+
 //---------------------------------------------------------------------------
-class TForm1 : public TForm
+class TForm1 : public TForm, IUIProgrammer
 {
 __published:	// IDE-managed Components
 	TGroupBox *Z;
-	TTabControl *TabControl1;
-	TButton *Button1;
-	TButton *Button2;
+	TButton *BtnReadFB;
+	TButton *BtnWriteFB;
 	TGroupBox *GroupBox2;
-	TCheckBox *CheckBox1;
-	TButton *Button3;
-	TButton *Button4;
 	TProgressBar *ProgressBar1;
 	TGroupBox *GroupBox3;
 	TButton *Button5;
@@ -38,12 +40,63 @@ __published:	// IDE-managed Components
 	TButton *Button10;
 	TGroupBox *GroupBox5;
 	TEdit *Edit1;
-	TButton *Button11;
+	TButton *BtnOpenFile;
 	TGroupBox *GroupBox1;
-	TMemo *Memo1;
+	TMemo *MemoConsole;
+	TOpenDialog *OpenDialogFile;
+	TCheckBox *CkBoxFBLB1;
+	TCheckBox *CkBoxFBLB2;
+	TTabControl *TabControl1;
+	TTabItem *Low;
+	TTabItem *High;
+	TTabItem *Extended;
+	TPanel *PanelFLB;
+	TPanel *PanelFHB;
+	TPanel *PanelFEB;
+	TButton *BtnReadFBH;
+	TButton *BtnWriteFBH;
+	TCheckBox *ChBxFHB7;
+	TCheckBox *ChBxFHB6;
+	TCheckBox *ChBxFHB5;
+	TCheckBox *ChBxFHB4;
+	TCheckBox *ChBxFHB3;
+	TCheckBox *ChBxFHB2;
+	TCheckBox *ChBxFHB1;
+	TCheckBox *ChBxFHB0;
+	TButton *BtnReadFBL;
+	TButton *BtnWritwFBL;
+	TButton *BtnReadFSE;
+	TButton *BtnWriteFSE;
+	TCheckBox *ChBxFLB7;
+	TCheckBox *ChBxFLB6;
+	TCheckBox *ChBxFLB5;
+	TCheckBox *ChBxFLB4;
+	TCheckBox *ChBxFLB3;
+	TCheckBox *ChBxFLB2;
+	TCheckBox *ChBxFLB1;
+	TCheckBox *ChBxFLB0;
+	TCheckBox *ChBxFEB0;
+	TMainMenu *MainMenu1;
+	TMenuItem *MenuItemFile;
+	TComboBox *CBxDevice;
+	TLabel *LabelChooseDevice;
+	TListBoxItem *ListBoxItemATtiny45;
+	TMenuItem *MenuItemDevice;
+	TGroupBox *GroupBox6;
+
+	void __fastcall BtnOpenFileClick(TObject *Sender);
+	void __fastcall BtnReadFBClick(TObject *Sender);
+	void __fastcall BtnReadFBHClick(TObject *Sender);
+	void __fastcall BtnReadFBLClick(TObject *Sender);
+	void __fastcall BtnReadFSEClick(TObject *Sender);
+
 private:	// User declarations
+	std::unique_ptr<IProgrammer> avrprog;
+
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
+	void updateConsole(const std::wstring& message);
+	void updateFuseBytes();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;
