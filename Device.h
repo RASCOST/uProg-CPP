@@ -48,11 +48,6 @@ struct Architecture {
 	std::vector<std::wstring> LockBits;
 	std::array<std::uint8_t, 3> Signature_Bytes_Address;
 	std::array<std::uint8_t, 3> Signature_Bytes;
-	std::uint8_t Flash_Size;
-	std::uint8_t Flash_Page_Size;
-	std::uint8_t Flash_PCWORD;
-	std::uint8_t Flash_Number_of_Pages;
-	std::uint8_t Flash_PCPAGE;
 	std::uint8_t EEPROM_Size;
 	std::uint8_t EEPROM_Page_size;
 	std::uint8_t EEPROM_PCWORD;
@@ -70,7 +65,8 @@ private:
 	std::wstring name;
 	std::unique_ptr<Architecture> architecture;
 
-    void setFuseBytes(TJSONObject* object);
+	void setFuseBytes(TJSONObject* object);
+	void setFlash(TJSONObject* object);
 	void readJSONFile();
 
 public:

@@ -18,6 +18,34 @@ void FuseBytes::setLow(TJSONArray* array) {
 /************************
 *
 ************************/
+void Flash::setFlashSize(std::wstring flashsize) {
+	flashSize = flashsize;
+}
+
+void Flash::setPageSize(std::wstring pagesize) {
+	pageSize = pagesize;
+}
+
+void Flash::setPcWord(TJSONArray* array) {
+	for (uint8_t idx = 0; idx < array->Count; idx++)
+		pcWord.push_back(std::stoi(array->Items[idx]->ToString().c_str()));
+}
+
+void Flash::setNumberPages(std::uint16_t pages) {
+	numberPages = pages;
+}
+
+void Flash::setPcPage(TJSONArray* array) {
+	for (uint8_t idx = 0; idx < array->Count; idx++)
+		pcPage.push_back(std::stoi(array->Items[idx]->ToString().c_str()));
+}
+
+void Flash::setPcMsb(std::uint16_t pcmsb) {
+    pcMsb = pcmsb;
+}
+/************************
+*
+************************/
 void Architecture::setLockBits(TJSONArray* lockBits) {
 	for (uint8_t lbit = 0; lbit < lockBits->Count; lbit++)
 		LockBits.push_back(lockBits->Items[lbit]->ToString().c_str());
@@ -69,6 +97,37 @@ void Device::setFuseBytes(TJSONObject* object) {
 	delete low;
 }
 
+void Device::setFlash(TJSONObject* object) {
+	TJSONObject* flash = (TJSONObject*) TJSONObject::ParseJSONValue(object->GetValue("Flash")->ToString());
+
+	TJSONPair* flashsize = (TJSONPair*) TJSONObject::ParseJSONValue(flash->GetValue("FlashSize")->ToString());
+	architecture->flash->setFlashSize(flashsize->ToString().c_str());
+
+	TJSONPair* pagesize = (TJSONPair*) TJSONObject::ParseJSONValue(flash->GetValue("PageSize")->ToString());
+	architecture->flash->setPageSize(pagesize->ToString().c_str());
+
+	TJSONArray* pcword =  (TJSONArray*) TJSONObject::ParseJSONValue(flash->GetValue("PCWORD")->ToString());
+	architecture->flash->setPcWord(pcword);
+
+	TJSONPair* numberpages = (TJSONPair*) TJSONObject::ParseJSONValue(flash->GetValue("NumberPages")->ToString());
+	architecture->flash->setNumberPages(std::stoi(numberpages->ToString().c_str()));
+
+	TJSONArray* pcpage =  (TJSONArray*) TJSONObject::ParseJSONValue(flash->GetValue("PCPAGE")->ToString());
+	architecture->flash->setPcPage(pcpage);
+
+	TJSONPair* pcmsb = (TJSONPair*) TJSONObject::ParseJSONValue(flash->GetValue("PCMSB")->ToString());
+	architecture->flash->setNumberPages(std::stoi(pcmsb->ToString().c_str()));
+
+	delete flash;
+	delete flashsize;
+	delete pagesize;
+	delete pcword;
+	delete numberpages;
+	delete pcpage;
+    delete pcmsb;
+}
+
+
 void Device::readJSONFile() {
 	try {
 		std::unique_ptr<TStringStream> jsonStream(new TStringStream);
@@ -83,7 +142,10 @@ void Device::readJSONFile() {
 		architecture->setLockBits(lockBits);
 
 		// Fuse Bytes
-        setFuseBytes(device);
+		setFuseBytes(device);
+
+		// Flash
+		setFlash(device);
 
 		// Signature Bytes Address
 		TJSONArray* signatureBytesAddress = (TJSONArray*) TJSONObject::ParseJSONValue(device->GetValue("SignatureBytesAddress")->ToString());
