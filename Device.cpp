@@ -41,11 +41,40 @@ void Flash::setPcPage(TJSONArray* array) {
 }
 
 void Flash::setPcMsb(std::uint16_t pcmsb) {
-    pcMsb = pcmsb;
+	pcMsb = pcmsb;
 }
+
 /************************
 *
 ************************/
+ void EEPROM::setEepromSize(std::wstring eepromsize) {
+	eepromSize = eepromsize;
+}
+
+void EEPROM::setPageSize(std::wstring pagesize) {
+	pageSize = pagesize;
+}
+
+void EEPROM::setPcWord(TJSONArray* array) {
+	for (uint8_t idx = 0; idx < array->Count; idx++)
+		pcWord.push_back(std::stoi(array->Items[idx]->ToString().c_str()));
+}
+
+void EEPROM::setNumberPages(std::uint16_t pages) {
+	numberPages = pages;
+}
+
+void EEPROM::setPcPage(TJSONArray* array) {
+	for (uint8_t idx = 0; idx < array->Count; idx++)
+		pcPage.push_back(std::stoi(array->Items[idx]->ToString().c_str()));
+}
+
+void EEPROM::setPcMsb(std::uint16_t pcmsb) {
+	pcMsb = pcmsb;
+}
+
+
+
 void Architecture::setLockBits(TJSONArray* lockBits) {
 	for (uint8_t lbit = 0; lbit < lockBits->Count; lbit++)
 		LockBits.push_back(lockBits->Items[lbit]->ToString().c_str());
