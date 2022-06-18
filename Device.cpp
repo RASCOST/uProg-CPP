@@ -73,8 +73,9 @@ void EEPROM::setPcMsb(std::uint16_t pcmsb) {
 	pcMsb = pcmsb;
 }
 
-
-
+/*************************
+*
+*************************/
 void Architecture::setLockBits(TJSONArray* lockBits) {
 	for (uint8_t lbit = 0; lbit < lockBits->Count; lbit++)
 		LockBits.push_back(lockBits->Items[lbit]->ToString().c_str());
@@ -153,9 +154,38 @@ void Device::setFlash(TJSONObject* object) {
 	delete pcword;
 	delete numberpages;
 	delete pcpage;
-    delete pcmsb;
+	delete pcmsb;
 }
 
+void Device::setEEPROM(TJSONObject* object) {
+	TJSONObject* eeprom = (TJSONObject*) TJSONObject::ParseJSONValue(object->GetValue("EEPROM")->ToString());
+
+	TJSONPair* eepromsize = (TJSONPair*) TJSONObject::ParseJSONValue(eeprom->GetValue("EEPROMSize")->ToString());
+	architecture->eeprom->setEepromSize(eepromsize->ToString().c_str());
+
+	TJSONPair* pagesize = (TJSONPair*) TJSONObject::ParseJSONValue(eeprom->GetValue("PageSize")->ToString());
+	architecture->eeprom->setPageSize(pagesize->ToString().c_str());
+
+	TJSONArray* pcword =  (TJSONArray*) TJSONObject::ParseJSONValue(eeprom->GetValue("PCWORD")->ToString());
+	architecture->eeprom->setPcWord(pcword);
+
+	TJSONPair* numberpages = (TJSONPair*) TJSONObject::ParseJSONValue(eeprom->GetValue("NumberPages")->ToString());
+	architecture->eeprom->setNumberPages(std::stoi(numberpages->ToString().c_str()));
+
+	TJSONArray* pcpage =  (TJSONArray*) TJSONObject::ParseJSONValue(eeprom->GetValue("PCPAGE")->ToString());
+	architecture->eeprom->setPcPage(pcpage);
+
+	TJSONPair* pcmsb = (TJSONPair*) TJSONObject::ParseJSONValue(eeprom->GetValue("PCMSB")->ToString());
+	architecture->eeprom->setNumberPages(std::stoi(pcmsb->ToString().c_str()));
+
+	delete eeprom;
+	delete eepromsize;
+	delete pagesize;
+	delete pcword;
+	delete numberpages;
+	delete pcpage;
+	delete pcmsb;
+}
 
 void Device::readJSONFile() {
 	try {
@@ -175,6 +205,9 @@ void Device::readJSONFile() {
 
 		// Flash
 		setFlash(device);
+
+		// EEPROM
+        setEEPROM(device);
 
 		// Signature Bytes Address
 		TJSONArray* signatureBytesAddress = (TJSONArray*) TJSONObject::ParseJSONValue(device->GetValue("SignatureBytesAddress")->ToString());

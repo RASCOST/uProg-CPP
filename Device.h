@@ -81,6 +81,7 @@ private:
 
 	void setFuseBytes(TJSONObject* object);
 	void setFlash(TJSONObject* object);
+	void setEEPROM(TJSONObject* object);
 	void readJSONFile();
 
 public:
