@@ -1,5 +1,8 @@
 ﻿#include "Device.h"
 
+/******************************
+*  Section Struct Fuse Bytes  *
+******************************/
 void FuseBytes::setExtended(TJSONArray* array) {
 	for (uint8_t idx = 0; idx < array->Count; idx++)
 		extended.push_back(array->Items[idx]->ToString().c_str());
@@ -15,9 +18,9 @@ void FuseBytes::setLow(TJSONArray* array) {
 		low[idx] =  array->Items[idx]->ToString().c_str();
 }
 
-/************************
-*
-************************/
+/*************************
+*  Section Struct Flash  *
+*************************/
 void Flash::setFlashSize(std::wstring flashsize) {
 	flashSize = flashsize;
 }
@@ -44,10 +47,10 @@ void Flash::setPcMsb(std::uint16_t pcmsb) {
 	pcMsb = pcmsb;
 }
 
-/************************
-*
-************************/
- void EEPROM::setEepromSize(std::wstring eepromsize) {
+/**************************
+*  Section Struct EEPROM  *
+**************************/
+void EEPROM::setEepromSize(std::wstring eepromsize) {
 	eepromSize = eepromsize;
 }
 
@@ -73,9 +76,9 @@ void EEPROM::setPcMsb(std::uint16_t pcmsb) {
 	pcMsb = pcmsb;
 }
 
-/*************************
-*
-*************************/
+/********************************
+*  Section Struct Architecture  *
+********************************/
 void Architecture::setLockBits(TJSONArray* lockBits) {
 	for (uint8_t lbit = 0; lbit < lockBits->Count; lbit++)
 		LockBits.push_back(lockBits->Items[lbit]->ToString().c_str());
@@ -91,9 +94,9 @@ void Architecture::setSignatureBytes(TJSONArray* signature) {
 		Signature_Bytes[position] = std::stoi(signature->Items[position]->ToString().c_str());
 }
 
-/****************************
-*
-****************************/
+/*************************
+*  Section Class Device  *
+*************************/
 Device::Device(const std::wstring name) {
 
 	architecture = std::make_unique<Architecture>();
