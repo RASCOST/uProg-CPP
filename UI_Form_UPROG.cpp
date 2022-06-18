@@ -84,3 +84,8 @@ void __fastcall TForm1::BtnReadFSEClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
+	std::wstring name = CBxDevice->Items->Strings[CBxDevice->ItemIndex].c_str();
+	updateConsole(name);
+}
+

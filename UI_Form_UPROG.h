@@ -89,6 +89,7 @@ __published:	// IDE-managed Components
 	void __fastcall BtnReadFBHClick(TObject *Sender);
 	void __fastcall BtnReadFBLClick(TObject *Sender);
 	void __fastcall BtnReadFSEClick(TObject *Sender);
+	void __fastcall CBxDeviceChange(TObject *Sender);
 
 private:	// User declarations
 	std::unique_ptr<IProgrammer> avrprog;
