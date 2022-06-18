@@ -23,6 +23,7 @@ public:
 	std::array<unsigned int, 3> readSignature(unsigned int address[]);
 	bool verifySignature(std::array<unsigned int, 3> signature);
 
+    void setDeviceName(const std::wstring name);
 	void openFile(std::string fileName);
 	void readFsBits(FUSE_BYTES byte);
 	void writeFsBits();

@@ -190,6 +190,10 @@ bool AVRProgrammer::verifySignature(std::array<unsigned int, 3> signature)
 	return true;
 }
 
+void AVRProgrammer::setDeviceName(const std::wstring name) {
+	  device->setDeviceName(name);
+}
+
 void AVRProgrammer::openFile(std::string fileName) {
 
 

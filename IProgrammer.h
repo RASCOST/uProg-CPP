@@ -18,7 +18,8 @@ public:
 class IProgrammer {
 public:
 	//virtual ~IProgrammer();
-    virtual bool programmingEnable() = 0;
+    virtual void setDeviceName(const std::wstring name) = 0;
+	virtual bool programmingEnable() = 0;
 	virtual void openFile(std::string fileName) = 0;
 	virtual void readFsBits(FUSE_BYTES byte) = 0;
 	virtual void writeFsBits() = 0;
