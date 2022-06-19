@@ -114,7 +114,7 @@ bool AVRProgrammer::programmingEnable()
 /// </summary>
 /// <param name="address"></param>
 /// <returns></returns>
-unsigned int AVRProgrammer::readSignatureByte(unsigned int address)
+unsigned char AVRProgrammer::readSignatureByte(unsigned char address)
 {
 	unsigned char readSignatureByte[] = { 0x30, 0x00, 0x00 };
 	unsigned char received = 0x00;
@@ -160,9 +160,9 @@ unsigned int AVRProgrammer::readSignatureByte(unsigned int address)
 /// </summary>
 /// <param name="address"></param>
 /// <returns></returns>
-std::array<unsigned int, 3> AVRProgrammer::readSignature(unsigned int address[])
+std::array<unsigned char, 3> AVRProgrammer::readSignature(std::array<unsigned char, 3> address)
 {
-	std::array<unsigned int, 3> signature{};
+	std::array<unsigned char, 3> signature{};
 
 	for (int index = 0; index < 3; index++)
 	{
@@ -177,15 +177,16 @@ std::array<unsigned int, 3> AVRProgrammer::readSignature(unsigned int address[])
 /// </summary>
 /// <param name="signature"></param>
 /// <returns></returns>
-bool AVRProgrammer::verifySignature(std::array<unsigned int, 3> signature)
+bool AVRProgrammer::verifySignature()
 {
-	/*std::array<unsigned int, 3> deviceSignature = device->getSignatureBytes();
+	std::array<unsigned char, 3> signature = device->getSignatureBytes();
+	std::array<unsigned char, 3> deviceSignature = readSignature(device->getSignatureBytesAddress());
 
 	for (int index = 0; index < 3; index++)
 	{
 		if (deviceSignature[index] != signature[index])
 			return false;
-	}     */
+	}
 
 	return true;
 }

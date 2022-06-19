@@ -62,16 +62,10 @@ struct Architecture {
 	std::vector<std::wstring> LockBits;
 	std::array<std::uint8_t, 3> Signature_Bytes_Address;
 	std::array<std::uint8_t, 3> Signature_Bytes;
-	std::uint8_t EEPROM_Size;
-	std::uint8_t EEPROM_Page_size;
-	std::uint8_t EEPROM_PCWORD;
-	std::uint8_t EEPROM_PCPAGE;
-	std::uint8_t EEPROM_EEAMSB;
 
 	void setLockBits(TJSONArray* lockBits);
 	void setSignatureBytesAddress(TJSONArray* address);
 	void setSignatureBytes(TJSONArray* signature);
-
 };
 
 class Device {
@@ -88,4 +82,6 @@ public:
 	Device();
 	void setDeviceName(const std::wstring device);
 	const std::wstring getDeviceName();
+    std::array<std::uint8_t, 3> getSignatureBytesAddress();
+	std::array<std::uint8_t, 3> getSignatureBytes();
 };

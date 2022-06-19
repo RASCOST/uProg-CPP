@@ -101,11 +101,12 @@ Device::Device() {
 
 	architecture = std::make_unique<Architecture>();
 	//setDeviceName(name);
-	readJSONFile();
+	//readJSONFile();
 }
 
 void Device::setDeviceName(const std::wstring device) {
 	name = device;
+    readJSONFile();
 }
 
 const std::wstring Device::getDeviceName() {
@@ -230,5 +231,15 @@ void Device::readJSONFile() {
 	catch( const std::exception& e) {
          std::cout << e.what() << std::endl;
 	}
+}
+
+std::array<std::uint8_t, 3> Device::getSignatureBytesAddress() {
+
+	return architecture->Signature_Bytes_Address;
+}
+
+std::array<std::uint8_t, 3> Device::getSignatureBytes() {
+
+	return architecture->Signature_Bytes;
 }
 

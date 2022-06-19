@@ -20,9 +20,9 @@ public:
 
 	// methods
 	bool programmingEnable();
-	std::array<unsigned int, 3> readSignature(unsigned int address[]);
-	bool verifySignature(std::array<unsigned int, 3> signature);
+	std::array<unsigned char, 3> readSignature(std::array<unsigned char, 3>  address);
 
+	bool verifySignature();
     void setDeviceName(const std::wstring name);
 	void openFile(std::string fileName);
 	void readFsBits(FUSE_BYTES byte);
@@ -37,6 +37,6 @@ public:
 
 private:
 	void init();
-	unsigned int readSignatureByte(unsigned int address);
+	unsigned char readSignatureByte(unsigned char address);
 	unsigned char readInstructions(std::array<unsigned char, 3> instruction);
 };

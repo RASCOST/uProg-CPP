@@ -28,6 +28,7 @@ public:
 	virtual void readFlash() = 0;
 	virtual void writeFlash() = 0;
 	virtual void verifyFlash() = 0;
+    virtual bool verifySignature() = 0;
 	virtual void readEeprom() = 0;
 	virtual void writeEeprom() = 0;
 };
