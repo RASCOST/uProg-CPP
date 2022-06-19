@@ -97,10 +97,10 @@ void Architecture::setSignatureBytes(TJSONArray* signature) {
 /*************************
 *  Section Class Device  *
 *************************/
-Device::Device(const std::wstring name) {
+Device::Device() {
 
 	architecture = std::make_unique<Architecture>();
-	setDeviceName(name);
+	//setDeviceName(name);
 	readJSONFile();
 }
 

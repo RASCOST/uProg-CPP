@@ -2,7 +2,7 @@
 #include <iostream>
 
 AVRProgrammer::AVRProgrammer(IUIProgrammer& ui) :
-	device(new Device(L"ATtiny45")),
+	device(new Device()),
 	spi(new SPI()),
 	state(0x08),
 	ui(ui)

@@ -85,7 +85,7 @@ private:
 	void readJSONFile();
 
 public:
-	Device(const std::wstring name);
+	Device();
 	void setDeviceName(const std::wstring device);
 	const std::wstring getDeviceName();
 };
