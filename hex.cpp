@@ -15,7 +15,7 @@ bool Hex::eof(const std::string line) {
 	return false;
 }
 
-std::uint16_t Hex::getSize(const std::string line) {
+std::uint16_t Hex::dataSize(const std::string line) {
 	return std::stoi(line.substr(1,2));
 }
 

@@ -23,8 +23,11 @@
 class Hex {
 private:
 	std::uint16_t size;
+
 	bool eof(const std::string line);
-	std::uint16_t getSize(const std::string line);
+	std::uint16_t dataSize(const std::string line);
+	void readData(const std::string line);
+
 public:
 	Hex();
 	void read(const std::wstring name);
