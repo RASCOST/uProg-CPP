@@ -45,9 +45,10 @@ void TForm1::updateConsole(const std::wstring& message) {
 
 void TForm1::updateLockBits() {
 	auto control = groupBxLB->Controls;
+
 	for( uint8_t idx = 0; idx < groupBxLB->ChildrenCount; idx++) {
 		//if( control[idx] == TCheckBox)
-		updateConsole(std::to_wstring(groupBxLB->ChildrenCount));
+		//updateConsole(std::to_wstring(groupBxLB->ChildrenCount));
 	}
 
 }
@@ -56,7 +57,8 @@ void __fastcall TForm1::BtnOpenFileClick(TObject *Sender)
 {
 	if (OpenDialogFile->Execute()) {
 		if (FileExists(OpenDialogFile->FileName)) {
-            updateConsole((L">> File: " + OpenDialogFile->FileName).c_str());
+			updateConsole((L">> File: " + OpenDialogFile->FileName).c_str());
+			EditFileLocation->Text = OpenDialogFile->FileName;
 		} else {
             throw(Exception("File does not exixts."));
         }
@@ -127,4 +129,5 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 		}
 	}
 }
+
 

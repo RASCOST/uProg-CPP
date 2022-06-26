@@ -39,7 +39,7 @@ __published:	// IDE-managed Components
 	TButton *Button9;
 	TButton *Button10;
 	TGroupBox *GroupBox5;
-	TEdit *Edit1;
+	TEdit *EditFileLocation;
 	TButton *BtnOpenFile;
 	TGroupBox *GroupBox1;
 	TMemo *MemoConsole;
