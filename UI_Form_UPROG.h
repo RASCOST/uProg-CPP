@@ -25,7 +25,7 @@
 class TForm1 : public TForm, IUIProgrammer
 {
 __published:	// IDE-managed Components
-	TGroupBox *Z;
+	TGroupBox *groupBxLB;
 	TButton *BtnReadFB;
 	TButton *BtnWriteFB;
 	TGroupBox *GroupBox2;
@@ -97,6 +97,7 @@ private:	// User declarations
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
 	void updateConsole(const std::wstring& message);
+    void updateLockBits();
 	void updateFuseBytes();
 };
 //---------------------------------------------------------------------------

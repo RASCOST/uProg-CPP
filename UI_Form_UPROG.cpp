@@ -43,7 +43,14 @@ void TForm1::updateConsole(const std::wstring& message) {
 	MemoConsole->Lines->Append(message.c_str());
 }
 
+void TForm1::updateLockBits() {
+	auto control = groupBxLB->Controls;
+	for( uint8_t idx = 0; idx < groupBxLB->ChildrenCount; idx++) {
+		//if( control[idx] == TCheckBox)
+		updateConsole(std::to_wstring(groupBxLB->ChildrenCount));
+	}
 
+}
 
 void __fastcall TForm1::BtnOpenFileClick(TObject *Sender)
 {
