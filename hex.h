@@ -24,7 +24,7 @@ class Hex {
 private:
 	std::uint16_t size;
 	bool eof(const std::string line);
-
+	std::uint16_t getSize(const std::string line);
 public:
 	Hex();
 	void read(const std::wstring name);
