@@ -60,7 +60,7 @@ void __fastcall TForm1::BtnOpenFileClick(TObject *Sender)
 			updateConsole((L">> File: " + OpenDialogFile->FileName).c_str());
 			EditFileLocation->Text = OpenDialogFile->FileName;
 		} else {
-            throw(Exception("File does not exixts."));
+            throw(Exception("File does not exists."));
         }
     }
 }
