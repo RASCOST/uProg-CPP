@@ -5,6 +5,8 @@
 //---------------------------------------------------------------------------
 #include <string>
 #include <fstream>
+#include <vector>
+#include <iostream>
 
 /*
 * Hex file format -> :llaaaatt[dd...]cc
@@ -23,9 +25,10 @@
 class Hex {
 private:
 	std::uint16_t size;
+	std::vector<uint8_t> data;
 
 	bool eof(const std::string line);
-	std::uint16_t dataSize(const std::string line);
+	std::uint16_t dataLength(const std::string line);
 	void readData(const std::string line);
 
 public:

@@ -15,8 +15,16 @@ bool Hex::eof(const std::string line) {
 	return false;
 }
 
-std::uint16_t Hex::dataSize(const std::string line) {
+std::uint16_t Hex::dataLength(const std::string line) {
 	return std::stoi(line.substr(1,2));
+}
+
+void Hex::readData(const std::string line) {
+	std::string data = line.substr(9,9 + dataLength(line));
+
+	for (std::uint8_t counter = 0; counter < dataLength(line) * 2; counter+=2) {
+		data.push_back(std::stoi(data.substr(counter, counter + 1)));
+    }
 }
 
 void Hex::read(const std::wstring name) {
@@ -26,14 +34,18 @@ void Hex::read(const std::wstring name) {
 
 	// open file
 	file.open(name);
-	if (!file.is_open())
-		throw(Exception("File does not exists."));
+	try {
+        if (!file.is_open())
+		throw(std::exception("File does not exists."));
+    }
+	catch (std::exception& e) {
+		  std::cout << e.what() << "\n";
+	}
 
 	// read lines
 	while(getline(file,line)) {
 	   if (eof(line))
 		break;
-
-
+	   readData(line);
     }
 }

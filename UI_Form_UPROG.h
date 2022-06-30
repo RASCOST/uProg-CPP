@@ -15,18 +15,19 @@
 #include <FMX.Edit.hpp>
 #include <FMX.StdCtrls.hpp>
 #include <FMX.TabControl.hpp>
+#include <FMX.ListBox.hpp>
+#include <FMX.Menus.hpp>
 
 #include "IProgrammer.h"
 #include "AVRProgrammer.h"
-#include <FMX.ListBox.hpp>
-#include <FMX.Menus.hpp>
+
 
 //---------------------------------------------------------------------------
 class TForm1 : public TForm, IUIProgrammer
 {
 __published:	// IDE-managed Components
 	TGroupBox *groupBxLB;
-	TButton *BtnReadFB;
+	TButton *BtnReadLB;
 	TButton *BtnWriteFB;
 	TGroupBox *GroupBox2;
 	TProgressBar *ProgressBar1;
@@ -85,7 +86,7 @@ __published:	// IDE-managed Components
 	TGroupBox *GroupBox6;
 
 	void __fastcall BtnOpenFileClick(TObject *Sender);
-	void __fastcall BtnReadFBClick(TObject *Sender);
+	void __fastcall BtnReadLBClick(TObject *Sender);
 	void __fastcall BtnReadFBHClick(TObject *Sender);
 	void __fastcall BtnReadFBLClick(TObject *Sender);
 	void __fastcall BtnReadFSEClick(TObject *Sender);
