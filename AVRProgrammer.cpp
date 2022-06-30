@@ -238,13 +238,16 @@ void AVRProgrammer::writeFsBits() {
 
 }
 
-void AVRProgrammer::readLBits() {
+std::uint8_t AVRProgrammer::readLBits() {
 	std::array<unsigned char, 3> readLockBits = { 0x58, 0x00, 0x00 };
 
-	unsigned char lockBits = readInstructions(readLockBits);
+	std::uint8_t lockBits = readInstructions(readLockBits);
 
 	ui.updateConsole(std::to_wstring(lockBits).c_str());
+
+	return lockBits;
 }
+
 void AVRProgrammer::writeLBits() {
 
 }

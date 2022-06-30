@@ -27,7 +27,7 @@ public:
 	void openFile(std::string fileName);
 	void readFsBits(FUSE_BYTES byte);
 	void writeFsBits();
-	void readLBits();
+	std::uint8_t readLBits();
 	void writeLBits();
 	void readFlash();
 	void writeFlash();

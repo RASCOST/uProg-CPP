@@ -23,7 +23,7 @@ public:
 	virtual void openFile(std::string fileName) = 0;
 	virtual void readFsBits(FUSE_BYTES byte) = 0;
 	virtual void writeFsBits() = 0;
-	virtual void readLBits() = 0;
+	virtual std::uint8_t readLBits() = 0;
 	virtual void writeLBits() = 0;
 	virtual void readFlash() = 0;
 	virtual void writeFlash() = 0;
