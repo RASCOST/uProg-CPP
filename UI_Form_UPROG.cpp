@@ -111,7 +111,9 @@ void __fastcall TForm1::BtnReadFBHClick(TObject *Sender)
 
 void __fastcall TForm1::BtnReadFBLClick(TObject *Sender)
 {
-	avrprog->readFsBits(FUSE_BYTES::LOW);
+	updateConsole(L">> Reading Low Fuse Bits.");
+	uint8_t low = avrprog->readFsBits(FUSE_BYTES::LOW);
+	updateFuseBytes(FUSE_BYTES::LOW, &low);
 }
 //---------------------------------------------------------------------------
 
