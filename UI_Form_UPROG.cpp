@@ -119,7 +119,9 @@ void __fastcall TForm1::BtnReadFBLClick(TObject *Sender)
 
 void __fastcall TForm1::BtnReadFSEClick(TObject *Sender)
 {
-    avrprog->readFsBits(FUSE_BYTES::EXTENDED);
+	updateConsole(L">> Reading Extended Fuse Bits.");
+	uint8_t ext = avrprog->readFsBits(FUSE_BYTES::EXTENDED);
+    updateFuseBytes(FUSE_BYTES::EXTENDED, &ext);
 }
 //---------------------------------------------------------------------------
 
