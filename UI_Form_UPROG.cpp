@@ -45,21 +45,44 @@ void TForm1::updateConsole(const std::wstring& message) {
 
 template<typename T>
 void TForm1::checkBits(T *t, uint8_t *bits) {
+	std::vector<TCheckBox*> checkbx;
 	auto *controls =  t->Controls;
 
+	// put all the checkboxes in a vector
 	for( uint8_t idx = 0; idx < controls->Count; idx++) {
+		TCheckBox *cb = dynamic_cast<TCheckBox*>(controls->Items[idx]);
+		if( cb != NULL)
+			checkbx.push_back(cb);
+	}
+
+	// reverse the vector because MBS is not at index 0
+	std::reverse(checkbx.begin(), checkbx.end());
+
+	// update the checkboxes
+	for (auto const& e : std::as_const(checkbx)) {
+		if ((*bits & 0x01) == 0) {
+			e->IsChecked = true;
+		} else {
+			e->IsChecked = false;
+		}
+
+		*bits = *bits >> 1; // prepare to check the next bit
+	}
+
+	/*for( uint8_t idx = 0; idx < controls->Count; idx++) {
 		TCheckBox *cb = dynamic_cast<TCheckBox*>(controls->Items[idx]);
 
 		if( cb != NULL) {
+		updateConsole((cb->Name).c_str());
 			if ((*bits & 0x01) == 0) {
 				cb->IsChecked = true;
 			} else {
 				cb->IsChecked = false;
 			}
-		}
 
-		*bits = *bits >> 1; // prepare to check the next bit
-	}
+			*bits = *bits >> 1; // prepare to check the next bit
+		}
+	} */
 }
 
 void TForm1::updateLockBits(std::uint8_t *lb) {
@@ -103,7 +126,6 @@ void TForm1::updateFuseBytes(FUSE_BYTES byte, uint8_t *bits) {
 
 void __fastcall TForm1::BtnReadFBHClick(TObject *Sender)
 {
-	updateConsole(L">> Reading High Fuse Bits.");
 	uint8_t high = avrprog->readFsBits(FUSE_BYTES::HIGH);
 	updateFuseBytes(FUSE_BYTES::HIGH, &high);
 }
@@ -111,7 +133,6 @@ void __fastcall TForm1::BtnReadFBHClick(TObject *Sender)
 
 void __fastcall TForm1::BtnReadFBLClick(TObject *Sender)
 {
-	updateConsole(L">> Reading Low Fuse Bits.");
 	uint8_t low = avrprog->readFsBits(FUSE_BYTES::LOW);
 	updateFuseBytes(FUSE_BYTES::LOW, &low);
 }
@@ -119,7 +140,6 @@ void __fastcall TForm1::BtnReadFBLClick(TObject *Sender)
 
 void __fastcall TForm1::BtnReadFSEClick(TObject *Sender)
 {
-	updateConsole(L">> Reading Extended Fuse Bits.");
 	uint8_t ext = avrprog->readFsBits(FUSE_BYTES::EXTENDED);
     updateFuseBytes(FUSE_BYTES::EXTENDED, &ext);
 }

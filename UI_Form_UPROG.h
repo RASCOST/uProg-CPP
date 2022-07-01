@@ -18,6 +18,9 @@
 #include <FMX.ListBox.hpp>
 #include <FMX.Menus.hpp>
 
+#include <vector>
+#include <algorithm>
+
 #include "IProgrammer.h"
 #include "AVRProgrammer.h"
 
