@@ -68,21 +68,6 @@ void TForm1::checkBits(T *t, uint8_t *bits) {
 
 		*bits = *bits >> 1; // prepare to check the next bit
 	}
-
-	/*for( uint8_t idx = 0; idx < controls->Count; idx++) {
-		TCheckBox *cb = dynamic_cast<TCheckBox*>(controls->Items[idx]);
-
-		if( cb != NULL) {
-		updateConsole((cb->Name).c_str());
-			if ((*bits & 0x01) == 0) {
-				cb->IsChecked = true;
-			} else {
-				cb->IsChecked = false;
-			}
-
-			*bits = *bits >> 1; // prepare to check the next bit
-		}
-	} */
 }
 
 void TForm1::updateLockBits(std::uint8_t *lb) {
@@ -113,13 +98,13 @@ void __fastcall TForm1::BtnReadLBClick(TObject *Sender)
 void TForm1::updateFuseBytes(FUSE_BYTES byte, uint8_t *bits) {
 	switch(byte) {
 		case FUSE_BYTES::LOW:
-			checkBits(PanelFHB, bits);
+			checkBits(PanelFLB, bits);
 			break;
 		case FUSE_BYTES::HIGH:
 			checkBits(PanelFHB, bits);
 			break;
 		case FUSE_BYTES::EXTENDED:
-			checkBits(PanelFHB, bits);
+			checkBits(PanelFEB, bits);
             break;
     }
 }
