@@ -43,8 +43,9 @@ void TForm1::updateConsole(const std::wstring& message) {
 	MemoConsole->Lines->Append(message.c_str());
 }
 
-void TForm1::checkBits(TGroupBox *gb, uint8_t *bits) {
-	auto *controls =  gb->Controls;
+template<typename T>
+void TForm1::checkBits(T *t, uint8_t *bits) {
+	auto *controls =  t->Controls;
 
 	for( uint8_t idx = 0; idx < controls->Count; idx++) {
 		TCheckBox *cb = dynamic_cast<TCheckBox*>(controls->Items[idx]);
@@ -86,10 +87,25 @@ void __fastcall TForm1::BtnReadLBClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void TForm1::updateFuseBytes(FUSE_BYTES byte, uint8_t *bits) {
+	switch(byte) {
+		case FUSE_BYTES::LOW:
+			checkBits(PanelFHB, bits);
+			break;
+		case FUSE_BYTES::HIGH:
+			checkBits(PanelFHB, bits);
+			break;
+		case FUSE_BYTES::EXTENDED:
+			checkBits(PanelFHB, bits);
+            break;
+    }
+}
 
 void __fastcall TForm1::BtnReadFBHClick(TObject *Sender)
 {
-	avrprog->readFsBits(FUSE_BYTES::HIGH);
+	updateConsole(L">> Reading High Fuse Bits.");
+	uint8_t high = avrprog->readFsBits(FUSE_BYTES::HIGH);
+	updateFuseBytes(FUSE_BYTES::HIGH, &high);
 }
 //---------------------------------------------------------------------------
 

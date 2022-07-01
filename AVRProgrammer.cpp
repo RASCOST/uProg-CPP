@@ -200,38 +200,40 @@ void AVRProgrammer::openFile(std::string fileName) {
 
 }
 
-void AVRProgrammer::readFsBits(FUSE_BYTES byte) {
-
+uint8_t AVRProgrammer::readFsBits(FUSE_BYTES byte) {
+	uint8_t bits = 0;
 
 	switch (byte) {
 		case FUSE_BYTES::LOW: {
 			std::array<unsigned char, 3> readFuseLowBits = { 0x50, 0x00, 0x00 };
 			ui.updateConsole(L">> Reading Fuse Low Bits.");
-			unsigned char fuseLowBits = readInstructions(readFuseLowBits);
-			ui.updateConsole(std::to_wstring(fuseLowBits).c_str());
+			bits = readInstructions(readFuseLowBits);
+			ui.updateConsole(std::to_wstring(bits).c_str());
 			break;
 		}
 
 		case FUSE_BYTES::HIGH: {
 			std::array<unsigned char, 3> readFuseHighBits = { 0x58, 0x08, 0x00 };
 			ui.updateConsole(L">> Reading Fuse High Bits.");
-			unsigned char fuseHighBits = readInstructions(readFuseHighBits);
-			ui.updateConsole(std::to_wstring(fuseHighBits).c_str());
+			bits = readInstructions(readFuseHighBits);
+			ui.updateConsole(std::to_wstring(bits).c_str());
 			break;
 		}
 
 		case FUSE_BYTES::EXTENDED: {
 			std::array<unsigned char, 3> readFuseExBits = { 0x50, 0x08, 0x00 };
 			ui.updateConsole(L">> Reading Fuse Extended Bits.");
-			unsigned char fuseExBits = readInstructions(readFuseExBits);
-			ui.updateConsole(std::to_wstring(fuseExBits).c_str());
+			bits = readInstructions(readFuseExBits);
+			ui.updateConsole(std::to_wstring(bits).c_str());
 			break;
 		}
 
 		default: {
             throw "The device is not supported by μProg!";
-        }
+		}
 	}
+
+	return bits;
 }
 
 void AVRProgrammer::writeFsBits() {

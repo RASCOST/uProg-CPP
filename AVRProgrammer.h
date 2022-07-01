@@ -25,7 +25,7 @@ public:
 	bool verifySignature();
     void setDeviceName(const std::wstring name);
 	void openFile(std::string fileName);
-	void readFsBits(FUSE_BYTES byte);
+	uint8_t readFsBits(FUSE_BYTES byte);
 	void writeFsBits();
 	std::uint8_t readLBits();
 	void writeLBits();
