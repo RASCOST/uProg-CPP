@@ -43,14 +43,26 @@ void TForm1::updateConsole(const std::wstring& message) {
 	MemoConsole->Lines->Append(message.c_str());
 }
 
-void TForm1::updateLockBits() {
-	auto controls =  groupBxLB->Controls;
+void TForm1::checkBits(TGroupBox *gb, uint8_t *bits) {
+	auto *controls =  gb->Controls;
 
 	for( uint8_t idx = 0; idx < controls->Count; idx++) {
 		TCheckBox *cb = dynamic_cast<TCheckBox*>(controls->Items[idx]);
-		if( cb != NULL)
-			updateConsole(cb->Name.c_str());
+
+		if( cb != NULL) {
+			if ((*bits & 0x01) == 0) {
+				cb->IsChecked = true;
+			} else {
+				cb->IsChecked = false;
+			}
+		}
+
+		*bits = *bits >> 1; // prepare to check the next bit
 	}
+}
+
+void TForm1::updateLockBits(std::uint8_t *lb) {
+	checkBits(groupBxLB, lb);
 }
 
 void __fastcall TForm1::BtnOpenFileClick(TObject *Sender)
@@ -69,8 +81,8 @@ void __fastcall TForm1::BtnOpenFileClick(TObject *Sender)
 void __fastcall TForm1::BtnReadLBClick(TObject *Sender)
 {
 	updateConsole(L">> Reading Lock Bits.");
-	avrprog->readLBits();
-	updateLockBits();
+	std::uint8_t lockBits = avrprog->readLBits();
+	updateLockBits(&lockBits);
 }
 //---------------------------------------------------------------------------
 

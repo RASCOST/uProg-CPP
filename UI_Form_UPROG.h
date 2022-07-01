@@ -94,11 +94,12 @@ __published:	// IDE-managed Components
 
 private:	// User declarations
 	std::unique_ptr<IProgrammer> avrprog;
+    void checkBits(TGroupBox* gb, uint8_t *bits);
 
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
 	void updateConsole(const std::wstring& message);
-    void updateLockBits();
+    void updateLockBits(std::uint8_t *lb);
 	void updateFuseBytes();
 };
 //---------------------------------------------------------------------------
