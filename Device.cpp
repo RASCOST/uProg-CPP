@@ -47,6 +47,10 @@ void Flash::setPcMsb(std::uint16_t pcmsb) {
 	pcMsb = pcmsb;
 }
 
+std::vector<std::uint8_t> getPCWord() {
+	return pcWord;
+}
+
 /**************************
 *  Section Struct EEPROM  *
 **************************/
