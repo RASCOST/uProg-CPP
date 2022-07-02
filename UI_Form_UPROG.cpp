@@ -80,6 +80,7 @@ void __fastcall TForm1::BtnOpenFileClick(TObject *Sender)
 		if (FileExists(OpenDialogFile->FileName)) {
 			updateConsole((L">> File: " + OpenDialogFile->FileName).c_str());
 			EditFileLocation->Text = OpenDialogFile->FileName;
+			avrprog->openFile(OpenDialogFile->FileName.c_str());
 		} else {
             throw(Exception("File does not exists."));
         }

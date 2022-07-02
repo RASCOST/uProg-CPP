@@ -4,12 +4,14 @@
 #include "SPI.h"
 #include "Device.h"
 #include "IProgrammer.h"
+#include "Hex.h"
 
 class AVRProgrammer : public IProgrammer
 {
 private:
 	SPI* spi;
 	Device* device;
+	Hex* hex;
 	IUIProgrammer& ui;
 	unsigned char state;
 
@@ -24,7 +26,7 @@ public:
 
 	bool verifySignature();
     void setDeviceName(const std::wstring name);
-	void openFile(std::string fileName);
+	void openFile(std::wstring fileName);
 	uint8_t readFsBits(FUSE_BYTES byte);
 	void writeFsBits();
 	std::uint8_t readLBits();

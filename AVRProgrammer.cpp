@@ -4,6 +4,7 @@
 AVRProgrammer::AVRProgrammer(IUIProgrammer& ui) :
 	device(new Device()),
 	spi(new SPI()),
+	hex(new Hex()),
 	state(0x08),
 	ui(ui)
 {
@@ -14,6 +15,7 @@ AVRProgrammer::~AVRProgrammer()
 {
 	  delete device;
 	  delete spi;
+      delete hex;
 }
 
 void AVRProgrammer::init()
@@ -195,9 +197,8 @@ void AVRProgrammer::setDeviceName(const std::wstring name) {
 	  device->setDeviceName(name);
 }
 
-void AVRProgrammer::openFile(std::string fileName) {
-
-
+void AVRProgrammer::openFile(std::wstring fileName) {
+	hex->read(fileName);
 }
 
 uint8_t AVRProgrammer::readFsBits(FUSE_BYTES byte) {

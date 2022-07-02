@@ -16,15 +16,16 @@ bool Hex::eof(const std::string line) {
 }
 
 std::uint16_t Hex::dataLength(const std::string line) {
-	return std::stoi(line.substr(1,2));
+	return std::stoi(line.substr(1,2), 0, 16);
 }
 
 void Hex::readData(const std::string line) {
-	std::string data = line.substr(9,9 + dataLength(line));
+	std::string bytes = line.substr(9,(dataLength(line)*2));
+	uint16_t size = dataLength(line);
 
-	for (std::uint8_t counter = 0; counter < dataLength(line) * 2; counter+=2) {
-		data.push_back(std::stoi(data.substr(counter, counter + 1)));
-    }
+	for (std::uint8_t counter = 0; counter < size; counter+=2) {
+		data.push_back(std::stoi(bytes.substr(counter, 2), 0, 16));
+	}
 }
 
 void Hex::read(const std::wstring name) {
