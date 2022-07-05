@@ -22,7 +22,7 @@ public:
 struct Flash {
 private:
 	std::wstring flashSize;
-	std::wstring pageSize;
+	std::uint16_t pageSize;
 	std::vector<std::uint8_t> pcWord;
 	std::uint16_t numberPages;
 	std::vector<std::uint8_t> pcPage;

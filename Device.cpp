@@ -26,7 +26,7 @@ void Flash::setFlashSize(std::wstring flashsize) {
 }
 
 void Flash::setPageSize(std::wstring pagesize) {
-	pageSize = pagesize;
+	pageSize = std::stoi(pagesize);
 }
 
 void Flash::setPcWord(TJSONArray* array) {
