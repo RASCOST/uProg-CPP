@@ -35,7 +35,9 @@ public:
 	void setNumberPages(std::uint16_t pages);
 	void setPcPage(TJSONArray* array);
 	void setPcMsb(std::uint16_t pcmsb);
-    std::vector<std::uint8_t> getPCWord();
+	std::vector<std::uint8_t> getPCWord();
+	uint16_t getNumberPages();
+	uint16_t getPageSize();
 };
 
 struct EEPROM {

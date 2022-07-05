@@ -47,8 +47,16 @@ void Flash::setPcMsb(std::uint16_t pcmsb) {
 	pcMsb = pcmsb;
 }
 
-std::vector<std::uint8_t> getPCWord() {
+std::vector<std::uint8_t> Flash::getPCWord() {
 	return pcWord;
+}
+
+uint16_t Flash::getNumberPages() {
+	return numberPages;
+}
+
+uint16_t Flash::getPageSize() {
+	return pageSize;
 }
 
 /**************************
