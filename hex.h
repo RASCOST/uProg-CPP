@@ -35,5 +35,6 @@ public:
 	Hex();
 	void read(const std::wstring name);
 	std::uint16_t getSize();
+    std::vector<uint8_t> getData();
 };
 #endif

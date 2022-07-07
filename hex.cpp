@@ -19,6 +19,10 @@ uint16_t Hex::getSize() {
 	return (uint16_t)data.size();
 }
 
+ std::vector<uint8_t> Hex::getData() {
+     return data;
+ }
+
 std::uint16_t Hex::dataLength(const std::string line) {
 	return std::stoi(line.substr(1,2), 0, 16);
 }
