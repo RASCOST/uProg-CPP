@@ -283,15 +283,14 @@ void AVRProgrammer::writeFlash() {
 	std::array<uint8_t, 4> lowByte = {0x40, 0x00, 0x00, 0x00};
 	std::array<uint8_t, 4> highByte = {0x48, 0x00, 0x00, 0x00};
 
-	for () {
+	for (uint16_t size = 0; size < hex->getSize(); size+= 2) {
 		// load the low byte
 		loadMemoryPage(lowByte);
 		// load the high byte
 		loadMemoryPage(highByte);
-    }
-
-	// store page
-	// polling ready
+		// store page
+		// polling ready
+	}
 }
 
 void AVRProgrammer::verifyFlash() {
