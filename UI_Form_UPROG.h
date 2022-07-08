@@ -35,9 +35,9 @@ __published:	// IDE-managed Components
 	TGroupBox *GroupBox2;
 	TProgressBar *ProgressBar1;
 	TGroupBox *GroupBox3;
-	TButton *Button5;
-	TButton *Button6;
-	TButton *Button7;
+	TButton *BtnReadFlash;
+	TButton *BtnWriteFlash;
+	TButton *BtnVerifyFlash;
 	TGroupBox *GroupBox4;
 	TButton *Button8;
 	TButton *Button9;
@@ -94,6 +94,7 @@ __published:	// IDE-managed Components
 	void __fastcall BtnReadFBLClick(TObject *Sender);
 	void __fastcall BtnReadFSEClick(TObject *Sender);
 	void __fastcall CBxDeviceChange(TObject *Sender);
+	void __fastcall BtnWriteFlashClick(TObject *Sender);
 
 private:	// User declarations
 	std::unique_ptr<IProgrammer> avrprog;

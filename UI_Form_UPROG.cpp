@@ -169,3 +169,9 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 }
 
 
+void __fastcall TForm1::BtnWriteFlashClick(TObject *Sender)
+{
+    avrprog->writeFlash();
+}
+//---------------------------------------------------------------------------
+
