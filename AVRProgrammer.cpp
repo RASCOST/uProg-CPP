@@ -312,6 +312,9 @@ void AVRProgrammer::writeFlash() {
 	uint16_t pcword = 0;
 	uint16_t pcpage = 0;
 
+	// before write in flash an erase must be done
+	chipErase();
+
 	for (uint16_t idx = 0; idx < hex->getSize(); idx+= 2) {
 		if (pcword < device->getPageSize()) {
 			// prepare the address
