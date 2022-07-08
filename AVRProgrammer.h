@@ -41,6 +41,7 @@ private:
 	void init();
 	unsigned char readSignatureByte(unsigned char address);
 	unsigned char readInstructions(std::array<unsigned char, 3> instruction);
+	void writeInstructions(std::array<uint8_t, 4> instruction);
 	void loadMemoryPage(std::array<uint8_t, 4> instruction);
 	void writeMemoryPage(std::array<uint8_t, 4> instruction);
 };

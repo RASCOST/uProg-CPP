@@ -66,6 +66,27 @@ unsigned char AVRProgrammer::readInstructions(std::array<unsigned char, 3> instr
 	return received;
 }
 
+void AVRProgrammer::writeInstructions(std::array<uint8_t, 4> instruction) {
+    uint8_t data2send = 0x00; // the reset must be zero
+
+	for (uint8_t byte = 0; byte < 4; byte++)
+	{
+		for (int bit = 0; bit < 8; bit++)
+		{
+			// Start MSB
+			data2send |= ((instruction[byte] << bit) & 0x80) >> 7;
+			std::cout << "data: " << std::hex << +data2send << "\n";
+			spi->writeMOSI(data2send);
+
+			spi->setCLK(data2send);
+			Sleep(1);
+			spi->clearCLK(data2send);
+			Sleep(1);
+			data2send = data2send & 0xFE; // clear the MOSI bit of the byte to send to put new bit
+		}
+	}
+}
+
 /// <summary>
 /// 
 /// </summary>
@@ -259,45 +280,11 @@ void AVRProgrammer::readFlash() {
 }
 
 void AVRProgrammer::loadMemoryPage(std::array<uint8_t, 4> instruction) {
-	uint8_t data2send = 0x00; // the reset must be zero
-
-	for (uint8_t byte = 0; byte < 4; byte++)
-	{
-		for (int bit = 0; bit < 8; bit++)
-		{
-			// Start MSB
-			data2send |= ((instruction[byte] << bit) & 0x80) >> 7;
-			std::cout << "data: " << std::hex << +data2send << "\n";
-			spi->writeMOSI(data2send);
-
-			spi->setCLK(data2send);
-			Sleep(1);
-			spi->clearCLK(data2send);
-			Sleep(1);
-			data2send = data2send & 0xFE; // clear the MOSI bit of the byte to send to put new bit
-		}
-	}
+	writeInstructions(instruction);
 }
 
 void AVRProgrammer::writeMemoryPage(std::array<uint8_t, 4> instruction) {
-    uint8_t data2send = 0x00; // the reset must be zero
-
-	for (uint8_t byte = 0; byte < 4; byte++)
-	{
-		for (int bit = 0; bit < 8; bit++)
-		{
-			// Start MSB
-			data2send |= ((instruction[byte] << bit) & 0x80) >> 7;
-			std::cout << "data: " << std::hex << +data2send << "\n";
-			spi->writeMOSI(data2send);
-
-			spi->setCLK(data2send);
-			Sleep(1);
-			spi->clearCLK(data2send);
-			Sleep(1);
-			data2send = data2send & 0xFE; // clear the MOSI bit of the byte to send to put new bit
-		}
-	}
+	writeInstructions(instruction);
 }
 
 void AVRProgrammer::writeFlash() {
