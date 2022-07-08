@@ -87,4 +87,5 @@ public:
     std::array<std::uint8_t, 3> getSignatureBytesAddress();
 	std::array<std::uint8_t, 3> getSignatureBytes();
 	uint16_t getPageSize();
+	uint16_t getNumberPages();
 };

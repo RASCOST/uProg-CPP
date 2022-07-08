@@ -255,3 +255,7 @@ uint16_t Device::getPageSize() {
     return architecture->flash->getPageSize();
 }
 
+uint16_t Device::getNumberPages() {
+  return architecture->flash->getNumberPages();
+}
+
