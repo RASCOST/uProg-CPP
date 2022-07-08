@@ -47,10 +47,6 @@ void Flash::setPcMsb(std::uint16_t pcmsb) {
 	pcMsb = pcmsb;
 }
 
-std::vector<std::uint8_t> Flash::getPCWord() {
-	return pcWord;
-}
-
 uint16_t Flash::getNumberPages() {
 	return numberPages;
 }
@@ -253,5 +249,9 @@ std::array<std::uint8_t, 3> Device::getSignatureBytesAddress() {
 std::array<std::uint8_t, 3> Device::getSignatureBytes() {
 
 	return architecture->Signature_Bytes;
+}
+
+uint16_t Device::getPageSize() {
+    return architecture->flash->getPageSize();
 }
 

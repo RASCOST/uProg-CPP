@@ -35,7 +35,6 @@ public:
 	void setNumberPages(std::uint16_t pages);
 	void setPcPage(TJSONArray* array);
 	void setPcMsb(std::uint16_t pcmsb);
-	std::vector<std::uint8_t> getPCWord();
 	uint16_t getNumberPages();
 	uint16_t getPageSize();
 };
@@ -87,4 +86,5 @@ public:
 	const std::wstring getDeviceName();
     std::array<std::uint8_t, 3> getSignatureBytesAddress();
 	std::array<std::uint8_t, 3> getSignatureBytes();
+	uint16_t getPageSize();
 };
