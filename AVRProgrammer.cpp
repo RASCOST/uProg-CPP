@@ -87,6 +87,17 @@ void AVRProgrammer::writeInstructions(std::array<uint8_t, 4> instruction) {
 	}
 }
 
+bool AVRProgrammer::polling() {
+	std::array<uint8_t, 3> poll = {0xF0,0x00, 0x00};
+
+	uint8_t recv = readInstructions(poll);
+
+	if (recv == 0x01) // if busy
+		return false;
+
+	return true;
+}
+
 /// <summary>
 /// 
 /// </summary>
