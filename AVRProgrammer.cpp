@@ -321,14 +321,14 @@ void AVRProgrammer::writeFlash() {
 			lowByte[2] = pcword;
 			// prepare the data
 			lowByte[3] = data[idx+1];
-			// load the low byte
+
 			loadMemoryPage(lowByte);
 
 			// prepare the address
 			highByte[2] = pcword;
 			// prepare the data
 			highByte[3] = data[idx];
-			// load the high byte
+
 			loadMemoryPage(highByte);
 
 			// update the address of the page
@@ -343,6 +343,9 @@ void AVRProgrammer::writeFlash() {
 
 				// wait until ready
 				while(!polling());
+
+				// update the address of the program memory
+				pcpage++;
 			}
 		}
 	}
