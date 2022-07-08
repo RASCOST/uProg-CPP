@@ -279,6 +279,27 @@ void AVRProgrammer::loadMemoryPage(std::array<uint8_t, 4> instruction) {
 	}
 }
 
+void AVRProgrammer::writeMemoryPage(std::array<uint8_t, 4> instruction) {
+    uint8_t data2send = 0x00; // the reset must be zero
+
+	for (uint8_t byte = 0; byte < 4; byte++)
+	{
+		for (int bit = 0; bit < 8; bit++)
+		{
+			// Start MSB
+			data2send |= ((instruction[byte] << bit) & 0x80) >> 7;
+			std::cout << "data: " << std::hex << +data2send << "\n";
+			spi->writeMOSI(data2send);
+
+			spi->setCLK(data2send);
+			Sleep(1);
+			spi->clearCLK(data2send);
+			Sleep(1);
+			data2send = data2send & 0xFE; // clear the MOSI bit of the byte to send to put new bit
+		}
+	}
+}
+
 void AVRProgrammer::writeFlash() {
 	std::array<uint8_t, 4> lowByte = {0x40, 0x00, 0x00, 0x00};
 	std::array<uint8_t, 4> highByte = {0x48, 0x00, 0x00, 0x00};
