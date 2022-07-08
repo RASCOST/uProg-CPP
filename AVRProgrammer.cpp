@@ -288,6 +288,7 @@ void AVRProgrammer::writeMemoryPage(std::array<uint8_t, 4> instruction) {
 }
 
 void AVRProgrammer::writeFlash() {
+	std::array<uint8_t, 4> memoryPage = {0x4C, 0x00, 0x00, 0x00};
 	std::array<uint8_t, 4> lowByte = {0x40, 0x00, 0x00, 0x00};
 	std::array<uint8_t, 4> highByte = {0x48, 0x00, 0x00, 0x00};
 	std::vector<uint8_t> data = hex->getData();
@@ -296,18 +297,30 @@ void AVRProgrammer::writeFlash() {
 
 	for (uint16_t idx = 0; idx < hex->getSize(); idx+= 2) {
 		if (pcword < device->getPageSize()) {
+			// prepare the address
 			lowByte[2] = pcword;
+			// prepare the data
 			lowByte[3] = data[idx+1];
 			// load the low byte
 			loadMemoryPage(lowByte);
-			// load the high byte
+
+			// prepare the address
 			highByte[2] = pcword;
+			// prepare the data
 			highByte[3] = data[idx];
+			// load the high byte
 			loadMemoryPage(highByte);
+
+			// update the address of the page
+			pcword++;
 		} else {
-			pcword = 0;
-			// store page
-			// polling ready
+			if (pcpage < device->getNumberPages()) {
+				memoryPage[1] = pcpage;
+                pcword = 0;
+				// store page
+				writeMemoryPage(memoryPage);
+				// polling ready
+			}
 		}
 	}
 }
