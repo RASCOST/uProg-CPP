@@ -286,17 +286,21 @@ void AVRProgrammer::writeFlash() {
 	uint16_t pcword = 0;
 	uint16_t pcpage = 0;
 
-	for (uint16_t idx = 0; idx < hex->getSize(); size+= 2) {
-		lowByte[2] = pcword;
-		lowByte[3] = data[idx];
-		// load the low byte
-		loadMemoryPage(lowByte);
-		// load the high byte
-		highByte[2] = pcword;
-		highByte[3] = data[idx+1];
-		loadMemoryPage(highByte);
-		// store page
-		// polling ready
+	for (uint16_t idx = 0; idx < hex->getSize(); idx+= 2) {
+		if (pcword < device->getPageSize()) {
+			lowByte[2] = pcword;
+			lowByte[3] = data[idx+1];
+			// load the low byte
+			loadMemoryPage(lowByte);
+			// load the high byte
+			highByte[2] = pcword;
+			highByte[3] = data[idx];
+			loadMemoryPage(highByte);
+		} else {
+			pcword = 0;
+			// store page
+			// polling ready
+		}
 	}
 }
 
