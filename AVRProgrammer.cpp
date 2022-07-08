@@ -98,6 +98,12 @@ bool AVRProgrammer::polling() {
 	return true;
 }
 
+void AVRProgrammer::chipErase() {
+	std::array<uint8_t, 4> erase = {0xAC,0x80, 0x00, 0x00};
+
+	writeInstructions(erase);
+}
+
 /// <summary>
 /// 
 /// </summary>
@@ -327,10 +333,13 @@ void AVRProgrammer::writeFlash() {
 		} else {
 			if (pcpage < device->getNumberPages()) {
 				memoryPage[1] = pcpage;
-                pcword = 0;
+				pcword = 0;
+
 				// store page
 				writeMemoryPage(memoryPage);
-				// polling ready
+
+				// wait until ready
+				while(!polling());
 			}
 		}
 	}

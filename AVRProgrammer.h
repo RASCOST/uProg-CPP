@@ -44,5 +44,6 @@ private:
 	void writeInstructions(std::array<uint8_t, 4> instruction);
 	void loadMemoryPage(std::array<uint8_t, 4> instruction);
 	void writeMemoryPage(std::array<uint8_t, 4> instruction);
-    bool polling();
+	bool polling();
+    void chipErase();
 };
