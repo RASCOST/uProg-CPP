@@ -31,7 +31,7 @@ void Hex::readData(const std::string line) {
 	std::string bytes = line.substr(9,(dataLength(line)*2));
 	uint16_t size = dataLength(line);
 
-	for (uint16_t counter = 0; counter < size; counter+=2) {
+	for (uint16_t counter = 0; counter < size*2; counter += 2) {
 		data.push_back(std::stoi(bytes.substr(counter, 2), 0, 16));
 	}
 }

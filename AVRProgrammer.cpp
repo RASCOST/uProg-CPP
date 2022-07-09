@@ -311,12 +311,15 @@ void AVRProgrammer::writeFlash() {
 	std::vector<uint8_t> data = hex->getData();
 	uint16_t pcword = 0;
 	uint16_t pcpage = 0;
+	uint16_t idx = 0;
+	uint16_t dataSize = hex->getSize();
+	bool FLAG_PAGE_PROGRAMMED = false;
 
 	// before write in flash an erase must be done
 	chipErase();
 	ui.updateConsole(L">> Erasing device...");
 
-	for (uint16_t idx = 0; idx < hex->getSize(); idx+= 2) {
+	while ( idx < dataSize) {
 		if (pcword < device->getPageSize()) {
 			// prepare the address
 			lowByte[2] = pcword;
@@ -334,6 +337,8 @@ void AVRProgrammer::writeFlash() {
 
 			// update the address of the page
 			pcword++;
+			idx += 2;
+			FLAG_PAGE_PROGRAMMED = false;
 		} else {
 			if (pcpage < device->getNumberPages()) {
 				ui.updateConsole(L">> Writing page...");
@@ -348,8 +353,16 @@ void AVRProgrammer::writeFlash() {
 
 				// update the address of the program memory
 				pcpage++;
+				FLAG_PAGE_PROGRAMMED = true;
 			}
 		}
+	}
+
+	if (!FLAG_PAGE_PROGRAMMED) {
+        ui.updateConsole(L">> Writing page...");
+		memoryPage[1] = pcpage;
+		// store page
+		writeMemoryPage(memoryPage);
 	}
 }
 
