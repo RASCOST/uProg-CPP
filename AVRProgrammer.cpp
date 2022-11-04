@@ -316,12 +316,15 @@ void AVRProgrammer::writeFlash() {
 	bool FLAG_PAGE_PROGRAMMED = false;
 
 	// before write in flash an erase must be done
-	chipErase();
 	ui.updateConsole(L">> Erasing device...");
+	chipErase();
+	Sleep(20);
+	ui.updateConsole(L">> Device erased...");
 
 	while ( idx < dataSize) {
 		if (pcword < device->getPageSize()) {
 			// prepare the address
+			lowByte[1] = pcpage;
 			lowByte[2] = pcword;
 			// prepare the data
 			lowByte[3] = data[idx+1];
@@ -329,6 +332,7 @@ void AVRProgrammer::writeFlash() {
 			loadMemoryPage(lowByte);
 			ui.updateConsole(L">>"  + std::to_wstring(data[idx]) + std::to_wstring(data[idx+1]));
 			// prepare the address
+            highByte[1] = pcpage;
 			highByte[2] = pcword;
 			// prepare the data
 			highByte[3] = data[idx];
@@ -343,6 +347,7 @@ void AVRProgrammer::writeFlash() {
 			if (pcpage < device->getNumberPages()) {
 				ui.updateConsole(L">> Writing page...");
 				memoryPage[1] = pcpage;
+                memoryPage[2] = pcword;
 				pcword = 0;
 
 				// store page
@@ -361,14 +366,65 @@ void AVRProgrammer::writeFlash() {
 	if (!FLAG_PAGE_PROGRAMMED) {
         ui.updateConsole(L">> Writing page...");
 		memoryPage[1] = pcpage;
+		memoryPage[2] = pcword;
+
 		// store page
 		writeMemoryPage(memoryPage);
+
+        // wait until ready
+		while(!polling());
 	}
+
+    verifyFlash();
 }
 
 void AVRProgrammer::verifyFlash() {
+	std::array<uint8_t, 3> lowByte = {0x20, 0x00, 0x00};
+	std::array<uint8_t, 3> highByte = {0x28, 0x00, 0x00};
+    uint16_t pcword = 0;
+	uint16_t pcpage = 0;
+	std::vector<uint8_t> program;
+	std::vector<uint8_t> file = hex->getData();
+	uint8_t low, high;
 
+	ui.updateConsole(L">> Verifying...");
+
+	while(true) {
+
+		highByte[1] = pcpage;
+		highByte[2] = pcword;
+		high = readInstructions(highByte);
+
+
+		lowByte[1] = pcpage;
+		lowByte[2] = pcword;
+		low = readInstructions(lowByte);
+
+        if (low == 0xFF && high == 0xFF)
+			break;
+
+		program.push_back(high);
+		program.push_back(low);
+
+		if (pcword == 31) {
+			pcword = 0;
+			pcpage++;
+		} else {
+            pcword++;
+		}
+	}
+
+	for (uint16_t idx = 0; idx < file.size(); idx++) {
+		ui.updateConsole(L"file: " + std::to_wstring(file[idx]) + L" -- memory: " + std::to_wstring(program[idx]));
+		if (file[idx] != program[idx]) {
+			ui.updateConsole(L">> Memory and file do not correspond!");
+			break;
+		}
+	}
+    ui.updateConsole(L">> file size: " + std::to_wstring(file.size()) + L" memory size: " + std::to_wstring(program.size()));
+    ui.updateConsole(L">> Verifying Finished!");
 }
+
 void AVRProgrammer::readEeprom() {
 
 }

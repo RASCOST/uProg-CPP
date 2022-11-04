@@ -164,7 +164,9 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 				updateConsole(L">> Device corresponds!");
 			else
                 updateConsole(L">> Device do not corresponds!");
-		}
+		} else {
+            updateConsole(L">> Device Not Synchronized");
+        }
 	}
 }
 
@@ -172,6 +174,12 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 void __fastcall TForm1::BtnWriteFlashClick(TObject *Sender)
 {
     avrprog->writeFlash();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BtnVerifyFlashClick(TObject *Sender)
+{
+    avrprog->verifyFlash();
 }
 //---------------------------------------------------------------------------
 

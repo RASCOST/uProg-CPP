@@ -87,6 +87,7 @@ __published:	// IDE-managed Components
 	TListBoxItem *ListBoxItemATtiny45;
 	TMenuItem *MenuItemDevice;
 	TGroupBox *GroupBox6;
+	TListBoxItem *ListBoxItemAtmega88;
 
 	void __fastcall BtnOpenFileClick(TObject *Sender);
 	void __fastcall BtnReadLBClick(TObject *Sender);
@@ -95,6 +96,7 @@ __published:	// IDE-managed Components
 	void __fastcall BtnReadFSEClick(TObject *Sender);
 	void __fastcall CBxDeviceChange(TObject *Sender);
 	void __fastcall BtnWriteFlashClick(TObject *Sender);
+	void __fastcall BtnVerifyFlashClick(TObject *Sender);
 
 private:	// User declarations
 	std::unique_ptr<IProgrammer> avrprog;
