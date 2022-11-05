@@ -346,8 +346,11 @@ void AVRProgrammer::writeFlash() {
 		} else {
 			if (pcpage < device->getNumberPages()) {
 				ui.updateConsole(L">> Writing page...");
-				memoryPage[1] = pcpage;
-                memoryPage[2] = pcword;
+				uint16_t address = (pcpage << 5) + pcword;
+				/*memoryPage[1] = pcpage;
+				memoryPage[2] = pcword; */
+				memoryPage[1] = static_cast<uint8_t> (address >> 8);
+				memoryPage[2] = static_cast<uint8_t> (address & 0x00FF);
 				pcword = 0;
 
 				// store page
