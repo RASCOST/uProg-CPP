@@ -311,6 +311,7 @@ void AVRProgrammer::writeFlash() {
 	std::vector<uint8_t> data = hex->getData();
 	uint16_t pcword = 0;
 	uint16_t pcpage = 0;
+	uint16_t address = 0;
 	uint16_t idx = 0;
 	uint16_t dataSize = hex->getSize();
 	bool FLAG_PAGE_PROGRAMMED = false;
@@ -346,7 +347,7 @@ void AVRProgrammer::writeFlash() {
 		} else {
 			if (pcpage < device->getNumberPages()) {
 				ui.updateConsole(L">> Writing page...");
-				uint16_t address = (pcpage << 5) + pcword;
+				address = (pcpage << 5) + pcword;
 				/*memoryPage[1] = pcpage;
 				memoryPage[2] = pcword; */
 				memoryPage[1] = static_cast<uint8_t> (address >> 8);
@@ -368,8 +369,11 @@ void AVRProgrammer::writeFlash() {
 
 	if (!FLAG_PAGE_PROGRAMMED) {
         ui.updateConsole(L">> Writing page...");
-		memoryPage[1] = pcpage;
-		memoryPage[2] = pcword;
+		/*memoryPage[1] = pcpage;
+		memoryPage[2] = pcword;*/
+        address = (pcpage << 5) + pcword;
+		memoryPage[1] = static_cast<uint8_t> (address >> 8);
+		memoryPage[2] = static_cast<uint8_t> (address & 0x00FF);
 
 		// store page
 		writeMemoryPage(memoryPage);
@@ -389,18 +393,22 @@ void AVRProgrammer::verifyFlash() {
 	std::vector<uint8_t> program;
 	std::vector<uint8_t> file = hex->getData();
 	uint8_t low, high;
+	uint16_t address;
 
 	ui.updateConsole(L">> Verifying...");
 
 	while(true) {
 
-		highByte[1] = pcpage;
-		highByte[2] = pcword;
+		address = (pcpage << 5) + pcword;
+		/*highByte[1] = pcpage;
+		highByte[2] = pcword; */
+		highByte[1] = static_cast<uint8_t> (address >> 8);
+		highByte[2] = static_cast<uint8_t> (address & 0x00FF);
 		high = readInstructions(highByte);
 
 
-		lowByte[1] = pcpage;
-		lowByte[2] = pcword;
+		lowByte[1] = static_cast<uint8_t> (address >> 8); //pcpage;
+		lowByte[2] = static_cast<uint8_t> (address & 0x00FF); //pcword;
 		low = readInstructions(lowByte);
 
         if (low == 0xFF && high == 0xFF)
