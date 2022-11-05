@@ -325,7 +325,6 @@ void AVRProgrammer::writeFlash() {
 	while ( idx < dataSize) {
 		if (pcword < device->getPageSize()) {
 			// prepare the address
-			lowByte[1] = pcpage;
 			lowByte[2] = pcword;
 			// prepare the data
 			lowByte[3] = data[idx+1];
@@ -333,7 +332,7 @@ void AVRProgrammer::writeFlash() {
 			loadMemoryPage(lowByte);
 			ui.updateConsole(L">>"  + std::to_wstring(data[idx]) + std::to_wstring(data[idx+1]));
 			// prepare the address
-            highByte[1] = pcpage;
+			//highByte[1] = pcpage;
 			highByte[2] = pcword;
 			// prepare the data
 			highByte[3] = data[idx];
@@ -347,9 +346,8 @@ void AVRProgrammer::writeFlash() {
 		} else {
 			if (pcpage < device->getNumberPages()) {
 				ui.updateConsole(L">> Writing page...");
-				address = (pcpage << 5) + pcword;
-				/*memoryPage[1] = pcpage;
-				memoryPage[2] = pcword; */
+				address = (pcpage << 5) + --pcword;
+
 				memoryPage[1] = static_cast<uint8_t> (address >> 8);
 				memoryPage[2] = static_cast<uint8_t> (address & 0x00FF);
 				pcword = 0;
@@ -368,9 +366,8 @@ void AVRProgrammer::writeFlash() {
 	}
 
 	if (!FLAG_PAGE_PROGRAMMED) {
-        ui.updateConsole(L">> Writing page...");
-		/*memoryPage[1] = pcpage;
-		memoryPage[2] = pcword;*/
+		ui.updateConsole(L">> Writing page...");
+
         address = (pcpage << 5) + pcword;
 		memoryPage[1] = static_cast<uint8_t> (address >> 8);
 		memoryPage[2] = static_cast<uint8_t> (address & 0x00FF);
@@ -400,15 +397,14 @@ void AVRProgrammer::verifyFlash() {
 	while(true) {
 
 		address = (pcpage << 5) + pcword;
-		/*highByte[1] = pcpage;
-		highByte[2] = pcword; */
+
 		highByte[1] = static_cast<uint8_t> (address >> 8);
 		highByte[2] = static_cast<uint8_t> (address & 0x00FF);
 		high = readInstructions(highByte);
 
 
-		lowByte[1] = static_cast<uint8_t> (address >> 8); //pcpage;
-		lowByte[2] = static_cast<uint8_t> (address & 0x00FF); //pcword;
+		lowByte[1] = static_cast<uint8_t> (address >> 8);
+		lowByte[2] = static_cast<uint8_t> (address & 0x00FF);
 		low = readInstructions(lowByte);
 
         if (low == 0xFF && high == 0xFF)
