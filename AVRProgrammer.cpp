@@ -92,7 +92,7 @@ bool AVRProgrammer::polling() {
 
 	uint8_t recv = readInstructions(poll);
 
-	if (recv == 0x01) // if busy
+	if (recv != 0xFE) // if busy
 		return false;
 
 	return true;
