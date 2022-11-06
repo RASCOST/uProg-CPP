@@ -26,7 +26,7 @@
   * | Pin 9  ( DSR# ) --> D5         | *
   * | Pin 2  ( DTR# ) --> D4         | *
   * | Pin 11 ( CTS# ) --> Output (1) | *
-  * | Pin 3  ( RTS# ) --> Outpu  (1) | *
+  * | Pin 3  ( RTS# ) --> Output (1) | *
   * | Pin 5  ( RXD )  --> Input  (0) | *
   * | Pin 1  ( TXD )  --> Output (1) | *
   * +--------------------------------+ *
