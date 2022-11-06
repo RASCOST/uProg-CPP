@@ -313,8 +313,8 @@ void AVRProgrammer::writeFlash() {
 	uint16_t pcword = 0;
 	uint16_t pcpage = 0;
 	uint16_t address = 0;
-	uint16_t idx = 0;
-	uint16_t dataSize = hex->getSize();
+	uint32_t idx = 0;
+	uint32_t dataSize = hex->getSize();
 	bool FLAG_PAGE_PROGRAMMED = false;
 
 	// before write in flash an erase must be done
@@ -346,7 +346,7 @@ void AVRProgrammer::writeFlash() {
 		} else {
 			if (pcpage < device->getNumberPages()) {
 				ui.updateConsole(L">> Writing page...");
-				address = (pcpage << 5) + --pcword;
+				address = static_cast<uint16_t>((pcpage << 5) + --pcword);
 
 				memoryPage[1] = static_cast<uint8_t>(address >> 8);
 				memoryPage[2] = static_cast<uint8_t>(address);
@@ -368,9 +368,9 @@ void AVRProgrammer::writeFlash() {
 	if (!FLAG_PAGE_PROGRAMMED) {
 		ui.updateConsole(L">> Writing page...");
 
-        address = (pcpage << 5) + pcword;
-		memoryPage[1] = static_cast<uint8_t> (address >> 8);
-		memoryPage[2] = static_cast<uint8_t> (address & 0x00FF);
+        address = static_cast<uint16_t>((pcpage << 5) + pcword);
+		memoryPage[1] = static_cast<uint8_t>(address >> 8);
+		memoryPage[2] = static_cast<uint8_t>(address);
 
 		// store page
 		writeMemoryPage(memoryPage);
