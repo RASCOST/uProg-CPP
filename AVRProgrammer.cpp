@@ -102,6 +102,7 @@ void AVRProgrammer::chipErase() {
 	std::array<uint8_t, 4> erase = {0xAC,0x80, 0x00, 0x00};
 
 	writeInstructions(erase);
+	Sleep(20);
 }
 
 /// <summary>
@@ -319,7 +320,6 @@ void AVRProgrammer::writeFlash() {
 	// before write in flash an erase must be done
 	ui.updateConsole(L">> Erasing device...");
 	chipErase();
-	Sleep(20);
 	ui.updateConsole(L">> Device erased...");
 
 	while ( idx < dataSize) {
