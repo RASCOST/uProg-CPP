@@ -339,7 +339,7 @@ void AVRProgrammer::writeFlash() {
 
 			loadMemoryPage(highByte);
 
-			// update the address of the page
+			// update the address of the buffer
 			pcword++;
 			idx += 2;
 			FLAG_PAGE_PROGRAMMED = false;
@@ -348,8 +348,8 @@ void AVRProgrammer::writeFlash() {
 				ui.updateConsole(L">> Writing page...");
 				address = (pcpage << 5) + --pcword;
 
-				memoryPage[1] = static_cast<uint8_t> (address >> 8);
-				memoryPage[2] = static_cast<uint8_t> (address & 0x00FF);
+				memoryPage[1] = static_cast<uint8_t>(address >> 8);
+				memoryPage[2] = static_cast<uint8_t>(address);
 				pcword = 0;
 
 				// store page
