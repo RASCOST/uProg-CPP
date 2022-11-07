@@ -330,7 +330,9 @@ void AVRProgrammer::writeFlash() {
 			lowByte[3] = data[idx+1];
 
 			loadMemoryPage(lowByte);
-			ui.updateConsole(L">>"  + std::to_wstring(data[idx]) + std::to_wstring(data[idx+1]));
+			ui.updateConsole(L">>"  +
+			 std::wstring(IntToHex(data[idx]).begin(), IntToHex(data[idx]).end()) +
+			 std::wstring(IntToHex(data[idx+1]).begin(), IntToHex(data[idx+1]).end()));
 			// prepare the address
 			//highByte[1] = pcpage;
 			highByte[2] = pcword;

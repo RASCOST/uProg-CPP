@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <System.SysUtils.hpp>
 
 #include "SPI.h"
 #include "Device.h"
