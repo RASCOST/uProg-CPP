@@ -327,17 +327,19 @@ void AVRProgrammer::writeFlash() {
 			// prepare the address
 			lowByte[2] = pcword;
 			// prepare the data
-			lowByte[3] = data[idx+1];
+			lowByte[3] = data[idx];
 
 			loadMemoryPage(lowByte);
-			ui.updateConsole(L">>"  +
-			 std::wstring(IntToHex(data[idx]).begin(), IntToHex(data[idx]).end()) +
-			 std::wstring(IntToHex(data[idx+1]).begin(), IntToHex(data[idx+1]).end()));
+
+			/*std::wstring hex_low = IntToHex(data[idx+1]).c_str();
+			std::wstring hex_high = IntToHex(data[idx]).c_str();
+			ui.updateConsole(L">>"  + hex_high + hex_low); */
+
 			// prepare the address
 			//highByte[1] = pcpage;
 			highByte[2] = pcword;
 			// prepare the data
-			highByte[3] = data[idx];
+			highByte[3] = data[idx+1];
 
 			loadMemoryPage(highByte);
 
@@ -347,11 +349,20 @@ void AVRProgrammer::writeFlash() {
 			FLAG_PAGE_PROGRAMMED = false;
 		} else {
 			if (pcpage < device->getNumberPages()) {
-				ui.updateConsole(L">> Writing page...");
-				address = static_cast<uint16_t>((pcpage << 5) + --pcword);
+				ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
+				address = static_cast<uint16_t>(pcpage << 5);
+
+				/*std::wstring hex_address = IntToHex(address).c_str();
+				ui.updateConsole(L">> Page Address: " + hex_address);
 
 				memoryPage[1] = static_cast<uint8_t>(address >> 8);
 				memoryPage[2] = static_cast<uint8_t>(address);
+
+				std::wstring low_address = IntToHex(static_cast<uint8_t>(address)).c_str();
+				std::wstring high_address = IntToHex(static_cast<uint8_t>(address >> 8)).c_str();
+				ui.updateConsole(L">> Page Address low: " + low_address);
+				ui.updateConsole(L">> Page Address high: " + high_address); */
+
 				pcword = 0;
 
 				// store page
@@ -368,11 +379,20 @@ void AVRProgrammer::writeFlash() {
 	}
 
 	if (!FLAG_PAGE_PROGRAMMED) {
-		ui.updateConsole(L">> Writing page...");
+		ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
 
-        address = static_cast<uint16_t>((pcpage << 5) + pcword);
+		address = static_cast<uint16_t>(pcpage << 5);
+
+		/*std::wstring hex_address = IntToHex(address).c_str();
+		ui.updateConsole(L">> Page Address: " + hex_address);*/
+
 		memoryPage[1] = static_cast<uint8_t>(address >> 8);
 		memoryPage[2] = static_cast<uint8_t>(address);
+
+		/*std::wstring low_address = IntToHex(static_cast<uint8_t>(address)).c_str();
+		std::wstring high_address = IntToHex(static_cast<uint8_t>(address >> 8)).c_str();
+		ui.updateConsole(L">> Page Address low: " + low_address);
+		ui.updateConsole(L">> Page Address high: " + high_address); */
 
 		// store page
 		writeMemoryPage(memoryPage);
@@ -381,7 +401,7 @@ void AVRProgrammer::writeFlash() {
 		while(!polling());
 	}
 
-    verifyFlash();
+	verifyFlash();
 }
 
 void AVRProgrammer::verifyFlash() {
@@ -398,17 +418,19 @@ void AVRProgrammer::verifyFlash() {
 
 	while(true) {
 
-		address = (pcpage << 5) + pcword;
+		address = pcpage << 5;
 
 		highByte[1] = static_cast<uint8_t> (address >> 8);
-		highByte[2] = static_cast<uint8_t> (address & 0x00FF);
+		highByte[2] = static_cast<uint8_t> (address);
 		high = readInstructions(highByte);
 
 
 		lowByte[1] = static_cast<uint8_t> (address >> 8);
-		lowByte[2] = static_cast<uint8_t> (address & 0x00FF);
+		lowByte[2] = static_cast<uint8_t> (address);
 		low = readInstructions(lowByte);
-
+		/*std::wstring hex_low = IntToHex(low).c_str();
+		std::wstring hex_high = IntToHex(high).c_str();
+		ui.updateConsole(L">>Before compare: "  + hex_high + hex_low); */
         if (low == 0xFF && high == 0xFF)
 			break;
 
@@ -424,13 +446,18 @@ void AVRProgrammer::verifyFlash() {
 	}
 
 	for (uint16_t idx = 0; idx < file.size(); idx++) {
-		ui.updateConsole(L"file: " + std::to_wstring(file[idx]) + L" -- memory: " + std::to_wstring(program[idx]));
+		/*std::wstring f = IntToHex(file[idx]).c_str(); //std::wstring(IntToHex(file[idx]).begin(), IntToHex(file[idx]).end());
+		std::wstring p = IntToHex(program[idx]).c_str(); //std::wstring(IntToHex(program[idx]).begin(), IntToHex(program[idx]).end());
+		ui.updateConsole(L"file: " +  f
+			+
+			L" -- memory: " + p
+			); */
 		if (file[idx] != program[idx]) {
 			ui.updateConsole(L">> Memory and file do not correspond!");
 			break;
 		}
 	}
-    ui.updateConsole(L">> file size: " + std::to_wstring(file.size()) + L" memory size: " + std::to_wstring(program.size()));
+	/*ui.updateConsole(L">> file size: " + std::to_wstring(file.size()) + L" memory size: " + std::to_wstring(program.size()));*/
     ui.updateConsole(L">> Verifying Finished!");
 }
 

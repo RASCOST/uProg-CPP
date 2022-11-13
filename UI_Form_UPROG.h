@@ -88,6 +88,7 @@ __published:	// IDE-managed Components
 	TMenuItem *MenuItemDevice;
 	TGroupBox *GroupBox6;
 	TListBoxItem *ListBoxItemAtmega88;
+	TTimer *Timer;
 
 	void __fastcall BtnOpenFileClick(TObject *Sender);
 	void __fastcall BtnReadLBClick(TObject *Sender);
