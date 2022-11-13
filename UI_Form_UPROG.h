@@ -47,7 +47,7 @@ __published:	// IDE-managed Components
 	TButton *BtnReadLB;
 	TButton *BtnWriteFB;
 	TGroupBox *GroupBox2;
-	TProgressBar *ProgressBar1;
+	TProgressBar *ProgressBar;
 	TGroupBox *GroupBox3;
 	TButton *BtnReadFlash;
 	TButton *BtnWriteFlash;
@@ -121,6 +121,7 @@ private:	// User declarations
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
 	void updateConsole(const std::wstring& message);
+    void updateProgressBar(const float progress);
 	void updateLockBits(std::uint8_t *lb);
 	void updateFuseBytes(FUSE_BYTES byte, uint8_t *bits);
 };

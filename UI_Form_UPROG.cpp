@@ -44,6 +44,10 @@ void TForm1::updateConsole(const std::wstring& message) {
 	MemoConsole->Lines->Append(message.c_str());
 }
 
+void TForm1::updateProgressBar(const float progress) {
+	ProgressBar->Value = progress;
+}
+
 template<typename T>
 void TForm1::checkBits(T *t, uint8_t *bits) {
 	std::vector<TCheckBox*> checkbx;

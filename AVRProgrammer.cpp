@@ -348,6 +348,8 @@ void AVRProgrammer::writeFlash() {
 			pcword++;
 			idx += 2;
 			FLAG_PAGE_PROGRAMMED = false;
+			ui.updateConsole(L">> Percentage: " + std::to_wstring((idx/dataSize)*100.0));
+			ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
 		} else {
 			if (pcpage < device->getNumberPages()) {
 				ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
@@ -402,7 +404,7 @@ void AVRProgrammer::writeFlash() {
 		while(!polling());
 	}
 
-	verifyFlash();
+	//verifyFlash();
 }
 
 void AVRProgrammer::verifyFlash() {
