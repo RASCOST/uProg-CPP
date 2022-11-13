@@ -248,7 +248,7 @@ uint8_t AVRProgrammer::readFsBits(FUSE_BYTES byte) {
 			std::array<unsigned char, 3> readFuseLowBits = { 0x50, 0x00, 0x00 };
 			ui.updateConsole(L">> Reading Fuse Low Bits.");
 			bits = readInstructions(readFuseLowBits);
-			ui.updateConsole(std::to_wstring(bits).c_str());
+			ui.updateConsole(std::to_wstring(bits));
 			break;
 		}
 
@@ -256,7 +256,7 @@ uint8_t AVRProgrammer::readFsBits(FUSE_BYTES byte) {
 			std::array<unsigned char, 3> readFuseHighBits = { 0x58, 0x08, 0x00 };
 			ui.updateConsole(L">> Reading Fuse High Bits.");
 			bits = readInstructions(readFuseHighBits);
-			ui.updateConsole(std::to_wstring(bits).c_str());
+			ui.updateConsole(std::to_wstring(bits));
 			break;
 		}
 
@@ -264,7 +264,7 @@ uint8_t AVRProgrammer::readFsBits(FUSE_BYTES byte) {
 			std::array<unsigned char, 3> readFuseExBits = { 0x50, 0x08, 0x00 };
 			ui.updateConsole(L">> Reading Fuse Extended Bits.");
 			bits = readInstructions(readFuseExBits);
-			ui.updateConsole(std::to_wstring(bits).c_str());
+			ui.updateConsole(std::to_wstring(bits));
 			break;
 		}
 
