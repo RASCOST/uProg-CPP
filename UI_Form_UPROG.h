@@ -4,6 +4,20 @@
 #define UI_Form_UPROGH
 //---------------------------------------------------------------------------
 #include <System.Classes.hpp>
+#include <System.Threading.hpp>
+
+#include <FMX.Controls.hpp>
+#include <FMX.Controls.Presentation.hpp>
+#include <FMX.Dialogs.hpp>
+#include <FMX.Edit.hpp>
+#include <FMX.ListBox.hpp>
+#include <FMX.Memo.hpp>
+#include <FMX.Memo.Types.hpp>
+#include <FMX.Menus.hpp>
+#include <FMX.ScrollBox.hpp>
+#include <FMX.StdCtrls.hpp>
+#include <FMX.TabControl.hpp>
+#include <FMX.Types.hpp>
 #include <FMX.Controls.hpp>
 #include <FMX.Forms.hpp>
 #include <FMX.Controls.Presentation.hpp>

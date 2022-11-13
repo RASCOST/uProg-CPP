@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.fmx"
+
 TForm1 *Form1;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -173,7 +174,11 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 
 void __fastcall TForm1::BtnWriteFlashClick(TObject *Sender)
 {
-    avrprog->writeFlash();
+	TTask::Run(
+		[this]() -> void {
+			avrprog->writeFlash();
+        }
+	);
 }
 //---------------------------------------------------------------------------
 
