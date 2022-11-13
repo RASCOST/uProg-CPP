@@ -238,6 +238,7 @@ void AVRProgrammer::setDeviceName(const std::wstring name) {
 
 void AVRProgrammer::openFile(std::wstring fileName) {
 	hex->read(fileName);
+    ui.updateConsole(L">> File Size: " + std::to_wstring(hex->getSize()) + L"Bytes");
 }
 
 uint8_t AVRProgrammer::readFsBits(FUSE_BYTES byte) {
