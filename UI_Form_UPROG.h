@@ -116,14 +116,14 @@ __published:	// IDE-managed Components
 private:	// User declarations
 	std::unique_ptr<IProgrammer> avrprog;
 	template<typename T>
-	void checkBits(T *t, uint8_t *bits);
+	void checkBits(T *t, uint8_t bits);
 
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
 	void updateConsole(const std::wstring& message);
     void updateProgressBar(const float progress);
-	void updateLockBits(std::uint8_t *lb);
-	void updateFuseBytes(FUSE_BYTES byte, uint8_t *bits);
+	void updateLockBits(const std::uint8_t lb);
+	void updateFuseBytes(FUSE_BYTES byte, uint8_t bits);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

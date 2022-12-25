@@ -12,7 +12,7 @@ enum class FUSE_BYTES { LOW, HIGH, EXTENDED };
 class IUIProgrammer {
 public:
 	virtual void updateConsole(const std::wstring& message) = 0;
-	virtual void updateLockBits() = 0;
+	virtual void updateLockBits(const uint8_t lockBits) = 0;
     virtual void updateProgressBar(const float progress) = 0;
 };
 
@@ -24,7 +24,7 @@ public:
 	virtual void openFile(std::wstring fileName) = 0;
 	virtual uint8_t readFsBits(FUSE_BYTES byte) = 0;
 	virtual void writeFsBits() = 0;
-	virtual uint8_t readLBits() = 0;
+	virtual void readLBits() = 0;
 	virtual void writeLBits() = 0;
 	virtual void readFlash() = 0;
 	virtual void writeFlash() = 0;

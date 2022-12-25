@@ -49,7 +49,8 @@ void TForm1::updateProgressBar(const float progress) {
 }
 
 template<typename T>
-void TForm1::checkBits(T *t, uint8_t *bits) {
+void TForm1::checkBits(T *t, uint8_t bits) {
+	uint8_t fsData = bits;
 	std::vector<TCheckBox*> checkbx;
 	auto *controls =  t->Controls;
 
@@ -65,17 +66,17 @@ void TForm1::checkBits(T *t, uint8_t *bits) {
 
 	// update the checkboxes
 	for (auto const& e : std::as_const(checkbx)) {
-		if ((*bits & 0x01) == 0) {
+		if ((fsData & 0x01) == 0) {
 			e->IsChecked = true;
 		} else {
 			e->IsChecked = false;
 		}
 
-		*bits = *bits >> 1; // prepare to check the next bit
+		fsData = fsData >> 1; // prepare to check the next bit
 	}
 }
 
-void TForm1::updateLockBits(std::uint8_t *lb) {
+void TForm1::updateLockBits(const std::uint8_t lb) {
 	checkBits(groupBxLB, lb);
 }
 
@@ -95,13 +96,19 @@ void __fastcall TForm1::BtnOpenFileClick(TObject *Sender)
 
 void __fastcall TForm1::BtnReadLBClick(TObject *Sender)
 {
-	updateConsole(L">> Reading Lock Bits.");
-	std::uint8_t lockBits = avrprog->readLBits();
-	updateLockBits(&lockBits);
+	avrprog->readLBits();
+	//updateLockBits(&lockBits);
+	/*TTask::Run(
+		[this]() -> void {
+			std::uint8_t lockBits = avrprog->readLBits();
+			updateLockBits(lockBits);
+		}
+
+	);*/
 }
 //---------------------------------------------------------------------------
 
-void TForm1::updateFuseBytes(FUSE_BYTES byte, uint8_t *bits) {
+void TForm1::updateFuseBytes(FUSE_BYTES byte, uint8_t bits) {
 	switch(byte) {
 		case FUSE_BYTES::LOW:
 			checkBits(PanelFLB, bits);
@@ -111,28 +118,56 @@ void TForm1::updateFuseBytes(FUSE_BYTES byte, uint8_t *bits) {
 			break;
 		case FUSE_BYTES::EXTENDED:
 			checkBits(PanelFEB, bits);
-            break;
-    }
+			break;
+	}
+
+	/*TTask::Run(
+		[this, byte, bits]() -> void {
+			switch(byte) {
+				case FUSE_BYTES::LOW:
+					TThread::Synchronize(0,
+						[this, bits] () -> void {
+							checkBits(PanelFLB, bits);
+						}
+					);
+					break;
+				case FUSE_BYTES::HIGH:
+					TThread::Synchronize(0,
+						[this, bits] () -> void {
+							checkBits(PanelFHB, bits);
+						}
+					);
+					break;
+				case FUSE_BYTES::EXTENDED:
+					TThread::Synchronize(0,
+						[this, bits] () -> void {
+							checkBits(PanelFEB, bits);
+						}
+					);
+					break;
+			}
+		}
+	);*/
 }
 
 void __fastcall TForm1::BtnReadFBHClick(TObject *Sender)
 {
 	uint8_t high = avrprog->readFsBits(FUSE_BYTES::HIGH);
-	updateFuseBytes(FUSE_BYTES::HIGH, &high);
+	updateFuseBytes(FUSE_BYTES::HIGH, high);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::BtnReadFBLClick(TObject *Sender)
 {
 	uint8_t low = avrprog->readFsBits(FUSE_BYTES::LOW);
-	updateFuseBytes(FUSE_BYTES::LOW, &low);
+	updateFuseBytes(FUSE_BYTES::LOW, low);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::BtnReadFSEClick(TObject *Sender)
 {
 	uint8_t ext = avrprog->readFsBits(FUSE_BYTES::EXTENDED);
-    updateFuseBytes(FUSE_BYTES::EXTENDED, &ext);
+    updateFuseBytes(FUSE_BYTES::EXTENDED, ext);
 }
 //---------------------------------------------------------------------------
 
@@ -162,7 +197,7 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 	if (nums == 1) {
 		if (avrprog->programmingEnable()) {
 			updateConsole(L">> Device Synchronized");
-			updateConsole(L">> Verify if selected device corresponds to connected device.");
+			updateConsole(L">> Verifying if the selected device corresponds to tne connected device.");
 
 			// check if the device connected and selected corresponds
 			if(avrprog->verifySignature())
@@ -170,7 +205,7 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 			else
                 updateConsole(L">> Device do not corresponds!");
 		} else {
-            updateConsole(L">> Device Not Synchronized");
+			updateConsole(L">> Device Not Synchronized");
         }
 	}
 }
@@ -178,11 +213,13 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 
 void __fastcall TForm1::BtnWriteFlashClick(TObject *Sender)
 {
-	TTask::Run(
+	/*TTask::Run(
 		[this]() -> void {
 			avrprog->writeFlash();
-        }
-	);
+		}
+
+	); */
+	avrprog->writeFlash();
 }
 //---------------------------------------------------------------------------
 

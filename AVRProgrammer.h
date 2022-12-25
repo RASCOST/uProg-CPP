@@ -2,6 +2,7 @@
 #include <System.SysUtils.hpp>
 #include <array>
 #include <System.Classes.hpp>
+#include <System.Threading.hpp>
 
 #include "SPI.h"
 #include "Device.h"
@@ -31,7 +32,7 @@ public:
 	void openFile(std::wstring fileName);
 	uint8_t readFsBits(FUSE_BYTES byte);
 	void writeFsBits();
-	std::uint8_t readLBits();
+	void readLBits();
 	void writeLBits();
 	void readFlash();
 	void writeFlash();

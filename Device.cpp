@@ -34,8 +34,8 @@ void Flash::setPcWord(TJSONArray* array) {
 		pcWord.push_back(std::stoi(array->Items[idx]->ToString().c_str()));
 }
 
-void Flash::setNumberPages(std::uint16_t pages) {
-	numberPages = pages;
+void Flash::setNumberPages(std::wstring numberpages) {
+	numberPages = std::stoi(numberpages);
 }
 
 void Flash::setPcPage(TJSONArray* array) {
@@ -152,13 +152,13 @@ void Device::setFlash(TJSONObject* object) {
 	architecture->flash->setPcWord(pcword);
 
 	TJSONPair* numberpages = (TJSONPair*) TJSONObject::ParseJSONValue(flash->GetValue("NumberPages")->ToString());
-	architecture->flash->setNumberPages(std::stoi(numberpages->ToString().c_str()));
+	architecture->flash->setNumberPages(numberpages->ToString().c_str());
 
 	TJSONArray* pcpage =  (TJSONArray*) TJSONObject::ParseJSONValue(flash->GetValue("PCPAGE")->ToString());
 	architecture->flash->setPcPage(pcpage);
 
 	TJSONPair* pcmsb = (TJSONPair*) TJSONObject::ParseJSONValue(flash->GetValue("PCMSB")->ToString());
-	architecture->flash->setNumberPages(std::stoi(pcmsb->ToString().c_str()));
+	architecture->flash->setPcMsb(std::stoi(pcmsb->ToString().c_str()));
 
 	delete flash;
 	delete flashsize;

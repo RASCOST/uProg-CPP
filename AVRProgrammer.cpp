@@ -249,7 +249,7 @@ uint8_t AVRProgrammer::readFsBits(FUSE_BYTES byte) {
 			std::array<unsigned char, 3> readFuseLowBits = { 0x50, 0x00, 0x00 };
 			ui.updateConsole(L">> Reading Fuse Low Bits.");
 			bits = readInstructions(readFuseLowBits);
-			ui.updateConsole(std::to_wstring(bits));
+			//ui.updateConsole(std::to_wstring(bits));
 			break;
 		}
 
@@ -257,7 +257,7 @@ uint8_t AVRProgrammer::readFsBits(FUSE_BYTES byte) {
 			std::array<unsigned char, 3> readFuseHighBits = { 0x58, 0x08, 0x00 };
 			ui.updateConsole(L">> Reading Fuse High Bits.");
 			bits = readInstructions(readFuseHighBits);
-			ui.updateConsole(std::to_wstring(bits));
+			//ui.updateConsole(std::to_wstring(bits));
 			break;
 		}
 
@@ -265,7 +265,7 @@ uint8_t AVRProgrammer::readFsBits(FUSE_BYTES byte) {
 			std::array<unsigned char, 3> readFuseExBits = { 0x50, 0x08, 0x00 };
 			ui.updateConsole(L">> Reading Fuse Extended Bits.");
 			bits = readInstructions(readFuseExBits);
-			ui.updateConsole(std::to_wstring(bits));
+			//ui.updateConsole(std::to_wstring(bits));
 			break;
 		}
 
@@ -281,14 +281,18 @@ void AVRProgrammer::writeFsBits() {
 
 }
 
-std::uint8_t AVRProgrammer::readLBits() {
+void AVRProgrammer::readLBits() {
 	std::array<unsigned char, 3> readLockBits = { 0x58, 0x00, 0x00 };
+	std::uint8_t lockBits = 0;
 
-	std::uint8_t lockBits = readInstructions(readLockBits);
+	ui.updateConsole(L">> Reading Lock Bits.");
 
-	ui.updateConsole(std::to_wstring(lockBits).c_str());
 
-	return lockBits;
+	TTask::Run(
+		[this, &lockBits, readLockBits] () -> void {
+			 lockBits = readInstructions(readLockBits);
+			 ui.updateLockBits(lockBits);
+		});
 }
 
 void AVRProgrammer::writeLBits() {
@@ -307,104 +311,97 @@ void AVRProgrammer::writeMemoryPage(std::array<uint8_t, 4> instruction) {
 }
 
 void AVRProgrammer::writeFlash() {
-	std::array<uint8_t, 4> memoryPage = {0x4C, 0x00, 0x00, 0x00};
-	std::array<uint8_t, 4> lowByte = {0x40, 0x00, 0x00, 0x00};
-	std::array<uint8_t, 4> highByte = {0x48, 0x00, 0x00, 0x00};
-	std::vector<uint8_t> data = hex->getData();
-	uint16_t pcword = 0;
-	uint16_t pcpage = 0;
-	uint16_t address = 0;
-	uint32_t idx = 0;
-	uint32_t dataSize = hex->getSize();
-	bool FLAG_PAGE_PROGRAMMED = false;
+	TTask::Run(
+	[this] () -> void {
+		std::array<uint8_t, 4> memoryPage = {0x4C, 0x00, 0x00, 0x00};
+		std::array<uint8_t, 4> lowByte = {0x40, 0x00, 0x00, 0x00};
+		std::array<uint8_t, 4> highByte = {0x48, 0x00, 0x00, 0x00};
+		std::vector<uint8_t> data = hex->getData();
+		uint32_t dataSize = hex->getSize();
+		uint32_t idx = 0;
+		uint16_t pcword = 0;
+		uint16_t pcpage = 0;
+		uint16_t address = 0;
+		uint32_t pages =  device->getNumberPages();
 
-	// before write in flash an erase must be done
-	ui.updateConsole(L">> Erasing device...");
-	chipErase();
-	ui.updateConsole(L">> Device erased...");
+		bool FLAG_PAGE_PROGRAMMED = false;
 
-	while ( idx < dataSize) {
-		if (pcword < device->getPageSize()) {
-			// prepare the address
-			lowByte[2] = pcword;
-			// prepare the data
-			lowByte[3] = data[idx];
+		// before write in flash an erase must be done
+		ui.updateConsole(L">> Erasing device...");
+		chipErase();
+		ui.updateConsole(L">> Device erased...");
+		ui.updateConsole(L">> Start programming device...");
 
-			loadMemoryPage(lowByte);
+		while ( idx < dataSize) {
+			if (pcword < device->getPageSize()) {
+				// prepare the address
+				lowByte[2] = pcword;
+				// prepare the data
+				lowByte[3] = data[idx];
 
-			/*std::wstring hex_low = IntToHex(data[idx+1]).c_str();
-			std::wstring hex_high = IntToHex(data[idx]).c_str();
-			ui.updateConsole(L">>"  + hex_high + hex_low); */
+				loadMemoryPage(lowByte);
 
-			// prepare the address
-			//highByte[1] = pcpage;
-			highByte[2] = pcword;
-			// prepare the data
-			highByte[3] = data[idx+1];
+				// prepare the address
+				highByte[2] = pcword;
+				// prepare the data
+				highByte[3] = data[idx+1];
 
-			loadMemoryPage(highByte);
+				loadMemoryPage(highByte);
 
-			// update the address of the buffer
-			pcword++;
-			idx += 2;
-			FLAG_PAGE_PROGRAMMED = false;
-			ui.updateConsole(L">> Percentage: " + std::to_wstring((idx/dataSize)*100.0));
-			ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
-		} else {
-			if (pcpage < device->getNumberPages()) {
-				ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
-				address = static_cast<uint16_t>(pcpage << 5);
+				// update the address of the buffer
+				pcword++;
+				idx += 2;
+				FLAG_PAGE_PROGRAMMED = false;
+				std::wstring hex_low = IntToHex(data[idx]).c_str();
+				std::wstring hex_high = IntToHex(data[idx+1]).c_str();
+				/*ui.updateConsole(L">> Data " + std::to_wstring(idx) + L" : " + hex_high + hex_low);*/
+				/*TThread::Synchronize(0,
+					[this, idx, dataSize] () -> void {
+						ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
+                    }
+				); */
+			} else {
+            // TRY
+				if (pcpage < pages) {
+					ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
+					ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
 
-				/*std::wstring hex_address = IntToHex(address).c_str();
-				ui.updateConsole(L">> Page Address: " + hex_address);
+					address = static_cast<uint16_t>(pcpage << 5);
+					memoryPage[1] = static_cast<uint8_t>(address >> 8);
+					memoryPage[2] = static_cast<uint8_t>(address);
 
-				memoryPage[1] = static_cast<uint8_t>(address >> 8);
-				memoryPage[2] = static_cast<uint8_t>(address);
+                    // reset the address of the page buffer
+					pcword = 0;
 
-				std::wstring low_address = IntToHex(static_cast<uint8_t>(address)).c_str();
-				std::wstring high_address = IntToHex(static_cast<uint8_t>(address >> 8)).c_str();
-				ui.updateConsole(L">> Page Address low: " + low_address);
-				ui.updateConsole(L">> Page Address high: " + high_address); */
+					// store page
+					writeMemoryPage(memoryPage);
 
-				pcword = 0;
+					// wait until ready
+					while(!polling());
 
-				// store page
-				writeMemoryPage(memoryPage);
-
-				// wait until ready
-				while(!polling());
-
-				// update the address of the program memory
-				pcpage++;
-				FLAG_PAGE_PROGRAMMED = true;
+					// update the address of the program memory
+					pcpage++;
+					FLAG_PAGE_PROGRAMMED = true;
+				}
 			}
 		}
-	}
 
-	if (!FLAG_PAGE_PROGRAMMED) {
-		ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
+		if (!FLAG_PAGE_PROGRAMMED) {
+			ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
 
-		address = static_cast<uint16_t>(pcpage << 5);
+			address = static_cast<uint16_t>(pcpage << 5);
+			memoryPage[1] = static_cast<uint8_t>(address >> 8);
+			memoryPage[2] = static_cast<uint8_t>(address);
 
-		/*std::wstring hex_address = IntToHex(address).c_str();
-		ui.updateConsole(L">> Page Address: " + hex_address);*/
+			// store page
+			writeMemoryPage(memoryPage);
 
-		memoryPage[1] = static_cast<uint8_t>(address >> 8);
-		memoryPage[2] = static_cast<uint8_t>(address);
-
-		/*std::wstring low_address = IntToHex(static_cast<uint8_t>(address)).c_str();
-		std::wstring high_address = IntToHex(static_cast<uint8_t>(address >> 8)).c_str();
-		ui.updateConsole(L">> Page Address low: " + low_address);
-		ui.updateConsole(L">> Page Address high: " + high_address); */
-
-		// store page
-		writeMemoryPage(memoryPage);
-
-        // wait until ready
-		while(!polling());
-	}
-
-	//verifyFlash();
+			// wait until ready
+			while(!polling());
+		}
+		ui.updateConsole(L">> Finished programming device...");
+		//verifyFlash();
+	});
 }
 
 void AVRProgrammer::verifyFlash() {

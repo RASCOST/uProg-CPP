@@ -22,19 +22,19 @@ public:
 struct Flash {
 private:
 	std::wstring flashSize;
-	std::uint16_t pageSize;
-	std::vector<std::uint8_t> pcWord;
-	std::uint16_t numberPages;
+	uint16_t pageSize;
+	std::vector<uint8_t> pcWord;
+	uint16_t numberPages;
 	std::vector<std::uint8_t> pcPage;
-	std::uint16_t pcMsb;
+	uint16_t pcMsb;
 
 public:
 	void setFlashSize(std::wstring flashsize);
 	void setPageSize(std::wstring pagesize);
 	void setPcWord(TJSONArray* array);
-	void setNumberPages(std::uint16_t pages);
+	void setNumberPages(std::wstring numberpages);
 	void setPcPage(TJSONArray* array);
-	void setPcMsb(std::uint16_t pcmsb);
+	void setPcMsb(uint16_t pcmsb);
 	uint16_t getNumberPages();
 	uint16_t getPageSize();
 };
