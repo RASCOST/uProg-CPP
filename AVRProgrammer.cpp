@@ -311,7 +311,7 @@ void AVRProgrammer::writeMemoryPage(std::array<uint8_t, 4> instruction) {
 }
 
 void AVRProgrammer::writeFlash() {
-	TTask::Run(
+	TThread::CreateAnonymousThread(
 	[this] () -> void {
 		std::array<uint8_t, 4> memoryPage = {0x4C, 0x00, 0x00, 0x00};
 		std::array<uint8_t, 4> lowByte = {0x40, 0x00, 0x00, 0x00};
@@ -322,15 +322,20 @@ void AVRProgrammer::writeFlash() {
 		uint16_t pcword = 0;
 		uint16_t pcpage = 0;
 		uint16_t address = 0;
-		uint32_t pages =  device->getNumberPages();
 
 		bool FLAG_PAGE_PROGRAMMED = false;
 
 		// before write in flash an erase must be done
-		ui.updateConsole(L">> Erasing device...");
+		TThread::Synchronize(nullptr, _di_TThreadProcedure([this] {
+			ui.updateConsole(L">> Erasing device...");
+		}));
+		//ui.updateConsole(L">> Erasing device...");
 		chipErase();
-		ui.updateConsole(L">> Device erased...");
-		ui.updateConsole(L">> Start programming device...");
+		TThread::Synchronize(nullptr, _di_TThreadProcedure([this] {
+			ui.updateConsole(L">> Device erased... \n >> Start programming device...");
+		}));
+		//ui.updateConsole(L">> Device erased...");
+		//ui.updateConsole(L">> Start programming device...");
 
 		while ( idx < dataSize) {
 			if (pcword < device->getPageSize()) {
@@ -358,19 +363,23 @@ void AVRProgrammer::writeFlash() {
 				/*TThread::Synchronize(0,
 					[this, idx, dataSize] () -> void {
 						ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
-                    }
+					}
 				); */
 			} else {
-            // TRY
-				if (pcpage < pages) {
-					ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
-					ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
+			// TRY
+				if (pcpage < device->getNumberPages()) {
+					TThread::Synchronize(nullptr, _di_TThreadProcedure([this, pcpage, idx, dataSize] {
+						ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
+						ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
+					}));
+					//ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
+					//ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
 
 					address = static_cast<uint16_t>(pcpage << 5);
 					memoryPage[1] = static_cast<uint8_t>(address >> 8);
 					memoryPage[2] = static_cast<uint8_t>(address);
 
-                    // reset the address of the page buffer
+					// reset the address of the page buffer
 					pcword = 0;
 
 					// store page
@@ -401,7 +410,7 @@ void AVRProgrammer::writeFlash() {
 		}
 		ui.updateConsole(L">> Finished programming device...");
 		//verifyFlash();
-	});
+	})->Start();
 }
 
 void AVRProgrammer::verifyFlash() {

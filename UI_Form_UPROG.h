@@ -35,8 +35,11 @@
 #include <vector>
 #include <algorithm>
 
+#include "ftd2xx.h"
+
 #include "IProgrammer.h"
 #include "AVRProgrammer.h"
+#include "ConnectDeviceThread.h"
 
 
 //---------------------------------------------------------------------------
@@ -114,11 +117,11 @@ __published:	// IDE-managed Components
 	void __fastcall BtnVerifyFlashClick(TObject *Sender);
 
 private:	// User declarations
-	std::unique_ptr<IProgrammer> avrprog;
-	template<typename T>
+    template<typename T>
 	void checkBits(T *t, uint8_t bits);
 
 public:		// User declarations
+	std::unique_ptr<IProgrammer> avrprog;
 	__fastcall TForm1(TComponent* Owner);
 	void updateConsole(const std::wstring& message);
     void updateProgressBar(const float progress);

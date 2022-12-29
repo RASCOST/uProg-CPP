@@ -11,7 +11,7 @@
 
 class AVRProgrammer : public IProgrammer
 {
-private:
+public:
 	SPI* spi;
 	Device* device;
 	Hex* hex;

@@ -10,16 +10,16 @@
 
 /*
 * Hex file format -> :llaaaatt[dd...]cc
-* : -> start of line in file
-* ll -> number of data bytes (dd)
+* :    -> start of line in file
+* ll   -> number of data bytes (dd)
 * aaaa -> start address for data in the line
-* tt ->  type of record
-*    -> 00 - data record
-*    -> 01 - end of file record
-*    -> 02 - extended segment address record
-*    -> 04 - extended linear adddress record
-*    -> 05 - start linear address
-* cc -> checksum
+* tt   -> type of record
+*        -> 00 - data record
+*        -> 01 - end of file record
+*        -> 02 - extended segment address record
+*        -> 04 - extended linear adddress record
+*        -> 05 - start linear address
+* cc   -> checksum
 */
 
 class Hex {

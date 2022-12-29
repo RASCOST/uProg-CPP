@@ -4,7 +4,6 @@
 #pragma hdrstop
 
 #include "UI_Form_UPROG.h"
-#include "ftd2xx.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.fmx"
@@ -177,7 +176,7 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 	avrprog->setDeviceName(name);
 
 	// check if there is a device connected
-    FT_STATUS status;
+	/*FT_STATUS status;
 	DWORD nums;
 
     status = FT_CreateDeviceInfoList(&nums);
@@ -191,7 +190,7 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 		message += L"Detected more than one device! Please remove your devices and try again.";
 	}
 
-	updateConsole(message.c_str());
+	updateConsole(message);
 
 	// Execute command enable programming
 	if (nums == 1) {
@@ -207,7 +206,8 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 		} else {
 			updateConsole(L">> Device Not Synchronized");
         }
-	}
+	}*/
+	ConnectDeviceThread *connectDeviceThread = new ConnectDeviceThread(false);
 }
 
 
