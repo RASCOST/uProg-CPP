@@ -40,6 +40,7 @@
 #include "IProgrammer.h"
 #include "AVRProgrammer.h"
 #include "ConnectDeviceThread.h"
+#include "WriteFlashThread.h"
 
 
 //---------------------------------------------------------------------------

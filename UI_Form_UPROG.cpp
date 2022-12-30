@@ -219,7 +219,8 @@ void __fastcall TForm1::BtnWriteFlashClick(TObject *Sender)
 		}
 
 	); */
-	avrprog->writeFlash();
+    WriteFlashThread *writeFlashThread = new WriteFlashThread(false);
+
 }
 //---------------------------------------------------------------------------
 

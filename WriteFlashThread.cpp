@@ -31,8 +31,8 @@ void __fastcall WriteFlashThread::Execute()
 	//---- Place thread code here ----
 
 	FreeOnTerminate = true;
-
-	std::array<uint8_t, 4> memoryPage = {0x4C, 0x00, 0x00, 0x00};
+	Form1->avrprog->writeFlash(this);
+	/*std::array<uint8_t, 4> memoryPage = {0x4C, 0x00, 0x00, 0x00};
 	std::array<uint8_t, 4> lowByte = {0x40, 0x00, 0x00, 0x00};
 	std::array<uint8_t, 4> highByte = {0x48, 0x00, 0x00, 0x00};
 	std::vector<uint8_t> data = Form1->avrprog->hex->getData();
@@ -131,6 +131,6 @@ void __fastcall WriteFlashThread::Execute()
 		Form1->updateConsole(L">> Finished programming device...");
 	});
 	//ui.updateConsole(L">> Finished programming device...");
-	//verifyFlash();
+	//verifyFlash();*/
 }
 //---------------------------------------------------------------------------

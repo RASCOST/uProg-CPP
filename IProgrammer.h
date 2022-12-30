@@ -3,7 +3,7 @@
 #ifndef IProgrammerH
 #define IProgrammerH
 //---------------------------------------------------------------------------
-
+#include <System.Classes.hpp>
 #include <memory>
 #include <string>
 
@@ -27,7 +27,7 @@ public:
 	virtual void readLBits() = 0;
 	virtual void writeLBits() = 0;
 	virtual void readFlash() = 0;
-	virtual void writeFlash() = 0;
+	virtual void writeFlash(TThread* thread) = 0;
 	virtual void verifyFlash() = 0;
     virtual bool verifySignature() = 0;
 	virtual void readEeprom() = 0;

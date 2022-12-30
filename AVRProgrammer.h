@@ -1,8 +1,10 @@
 #pragma once
 #include <System.SysUtils.hpp>
-#include <array>
 #include <System.Classes.hpp>
 #include <System.Threading.hpp>
+
+#include <array>
+#include <chrono>
 
 #include "SPI.h"
 #include "Device.h"
@@ -11,7 +13,7 @@
 
 class AVRProgrammer : public IProgrammer
 {
-public:
+private:
 	SPI* spi;
 	Device* device;
 	Hex* hex;
@@ -35,7 +37,7 @@ public:
 	void readLBits();
 	void writeLBits();
 	void readFlash();
-	void writeFlash();
+	void writeFlash(TThread* thread);
 	void verifyFlash();
 	void readEeprom();
 	void writeEeprom();
@@ -48,5 +50,6 @@ private:
 	void loadMemoryPage(std::array<uint8_t, 4> instruction);
 	void writeMemoryPage(std::array<uint8_t, 4> instruction);
 	bool polling();
-    void chipErase();
+	void chipErase();
+	void delay_ms(uint16_t ms);
 };

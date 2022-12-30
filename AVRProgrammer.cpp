@@ -8,6 +8,7 @@ AVRProgrammer::AVRProgrammer(IUIProgrammer& ui) :
 	state(0x08),
 	ui(ui)
 {
+
 	ui.updateConsole(L">> Welcome to μProg!");
 }
 
@@ -18,12 +19,19 @@ AVRProgrammer::~AVRProgrammer()
       delete hex;
 }
 
+void AVRProgrammer::delay_ms(uint16_t ms) {
+	double delay = ms/1000.0;
+	auto start = std::chrono::steady_clock::now();
+
+	while(std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count() < delay);
+}
+
 void AVRProgrammer::init()
 {
 	spi->setCS(0x00); // clear the reset
 	spi->clearCLK(0x00); // clear the clock
 	spi->clearCS(0x08); // give a pulse reset
-	Sleep(1);
+	delay_ms(1);
 	spi->setCS(0x00); // clear the reset
 }
 
@@ -45,7 +53,7 @@ unsigned char AVRProgrammer::readInstructions(std::array<unsigned char, 3> instr
 			}
 
 			spi->setCLK(data2send);
-			Sleep(1);
+			delay_ms(1);
 
 			 // Read the response
 			if (byte == 3)
@@ -56,7 +64,7 @@ unsigned char AVRProgrammer::readInstructions(std::array<unsigned char, 3> instr
 			}
 
 			spi->clearCLK(data2send);
-			Sleep(1);
+			delay_ms(1);
 			data2send = data2send & 0xFE; // clear the MOSI bit of the byte to send to put new bit
 		}
 	}
@@ -79,9 +87,9 @@ void AVRProgrammer::writeInstructions(std::array<uint8_t, 4> instruction) {
 			spi->writeMOSI(data2send);
 
 			spi->setCLK(data2send);
-			Sleep(1);
+			delay_ms(1);
 			spi->clearCLK(data2send);
-			Sleep(1);
+			delay_ms(1);
 			data2send = data2send & 0xFE; // clear the MOSI bit of the byte to send to put new bit
 		}
 	}
@@ -102,7 +110,7 @@ void AVRProgrammer::chipErase() {
 	std::array<uint8_t, 4> erase = {0xAC,0x80, 0x00, 0x00};
 
 	writeInstructions(erase);
-	Sleep(20);
+	delay_ms(20);
 }
 
 /// <summary>
@@ -116,7 +124,7 @@ bool AVRProgrammer::programmingEnable()
 	unsigned char data2send = 0x00; // the reset must be zero
 
 	init();
-	Sleep(20);
+	delay_ms(20);
 
 	for (int item = 0; item < 4; item++)
 	{
@@ -127,7 +135,7 @@ bool AVRProgrammer::programmingEnable()
 			//std::cout << "data: " << std::hex << +data2send << "\n";
 			spi->writeMOSI(data2send);
 			spi->setCLK(data2send);
-			Sleep(1);
+			delay_ms(1);
 			if (item == 2)
 			{
 				// start MSB
@@ -135,7 +143,7 @@ bool AVRProgrammer::programmingEnable()
 				//std::cout << "Received: " << std::hex << +received << "\n";
 			}
 			spi->clearCLK(data2send);
-			Sleep(1);
+			delay_ms(1);
 			data2send = data2send & 0xFE; // clear the MOSI bit of the byte to send to put new bit
 		}
 	}
@@ -177,7 +185,7 @@ unsigned char AVRProgrammer::readSignatureByte(unsigned char address)
 			}
 
 			spi->setCLK(data2send);
-			Sleep(1);
+			delay_ms(1);
 
 			 // Read the response
 			if (instruction == 3)
@@ -188,7 +196,7 @@ unsigned char AVRProgrammer::readSignatureByte(unsigned char address)
 			}
 
 			spi->clearCLK(data2send);
-			Sleep(1);
+			delay_ms(1);
 			data2send = data2send & 0xFE; // clear the MOSI bit of the byte to send to put new bit
 		}
 	}
@@ -310,107 +318,109 @@ void AVRProgrammer::writeMemoryPage(std::array<uint8_t, 4> instruction) {
 	writeInstructions(instruction);
 }
 
-void AVRProgrammer::writeFlash() {
-	TThread::CreateAnonymousThread(
-	[this] () -> void {
-		std::array<uint8_t, 4> memoryPage = {0x4C, 0x00, 0x00, 0x00};
-		std::array<uint8_t, 4> lowByte = {0x40, 0x00, 0x00, 0x00};
-		std::array<uint8_t, 4> highByte = {0x48, 0x00, 0x00, 0x00};
-		std::vector<uint8_t> data = hex->getData();
-		uint32_t dataSize = hex->getSize();
-		uint32_t idx = 0;
-		uint16_t pcword = 0;
-		uint16_t pcpage = 0;
-		uint16_t address = 0;
+void AVRProgrammer::writeFlash(TThread* thread) {
+	std::array<uint8_t, 4> memoryPage = {0x4C, 0x00, 0x00, 0x00};
+	std::array<uint8_t, 4> lowByte = {0x40, 0x00, 0x00, 0x00};
+	std::array<uint8_t, 4> highByte = {0x48, 0x00, 0x00, 0x00};
+	std::vector<uint8_t> data = hex->getData();
+	uint32_t dataSize = hex->getSize();
+	uint32_t idx = 0;
+	uint16_t pcword = 0;
+	uint16_t pcpage = 0;
+	uint16_t address = 0;
 
-		bool FLAG_PAGE_PROGRAMMED = false;
+	bool FLAG_PAGE_PROGRAMMED = false;
 
-		// before write in flash an erase must be done
-		TThread::Synchronize(nullptr, _di_TThreadProcedure([this] {
-			ui.updateConsole(L">> Erasing device...");
-		}));
-		//ui.updateConsole(L">> Erasing device...");
-		chipErase();
-		TThread::Synchronize(nullptr, _di_TThreadProcedure([this] {
-			ui.updateConsole(L">> Device erased... \n >> Start programming device...");
-		}));
-		//ui.updateConsole(L">> Device erased...");
-		//ui.updateConsole(L">> Start programming device...");
+	// before write in flash an erase must be done
+	TThread::Synchronize(thread, [this]{
+		ui.updateConsole(L">> Erasing device...");
+	});
+	chipErase();
 
-		while ( idx < dataSize) {
-			if (pcword < device->getPageSize()) {
-				// prepare the address
-				lowByte[2] = pcword;
-				// prepare the data
-				lowByte[3] = data[idx];
+	TThread::Synchronize(thread, [this]{
+		ui.updateConsole(L">> Device erased... \n >> Start programming device...");
+	});
 
-				loadMemoryPage(lowByte);
+	while ( idx < dataSize) {
+		/*TThread::Synchronize(thread, [this, pcpage, pcword]{
+			ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage) + L"... " + std::to_wstring((pcword/32.0)*100) + L"%");;
+		});*/
 
-				// prepare the address
-				highByte[2] = pcword;
-				// prepare the data
-				highByte[3] = data[idx+1];
+		if (pcword < device->getPageSize()) {
+			// prepare the address
+			lowByte[2] = pcword;
+			// prepare the data
+			lowByte[3] = data[idx];
 
-				loadMemoryPage(highByte);
+			loadMemoryPage(lowByte);
 
-				// update the address of the buffer
-				pcword++;
-				idx += 2;
-				FLAG_PAGE_PROGRAMMED = false;
-				std::wstring hex_low = IntToHex(data[idx]).c_str();
-				std::wstring hex_high = IntToHex(data[idx+1]).c_str();
-				/*ui.updateConsole(L">> Data " + std::to_wstring(idx) + L" : " + hex_high + hex_low);*/
-				/*TThread::Synchronize(0,
-					[this, idx, dataSize] () -> void {
-						ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
-					}
-				); */
-			} else {
-			// TRY
-				if (pcpage < device->getNumberPages()) {
-					TThread::Synchronize(nullptr, _di_TThreadProcedure([this, pcpage, idx, dataSize] {
-						ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
-						ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
-					}));
-					//ui.updateProgressBar(static_cast<float>(idx/dataSize)*100.0);
-					//ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
+			// prepare the address
+			highByte[2] = pcword;
+			// prepare the data
+			highByte[3] = data[idx+1];
 
-					address = static_cast<uint16_t>(pcpage << 5);
-					memoryPage[1] = static_cast<uint8_t>(address >> 8);
-					memoryPage[2] = static_cast<uint8_t>(address);
+			loadMemoryPage(highByte);
 
-					// reset the address of the page buffer
-					pcword = 0;
-
-					// store page
-					writeMemoryPage(memoryPage);
-
-					// wait until ready
-					while(!polling());
-
-					// update the address of the program memory
-					pcpage++;
-					FLAG_PAGE_PROGRAMMED = true;
+			// update the address of the buffer
+			pcword++;
+			idx += 2;
+			FLAG_PAGE_PROGRAMMED = false;
+			/*std::wstring hex_low = IntToHex(data[idx]).c_str();
+			std::wstring hex_high = IntToHex(data[idx+1]).c_str();
+			ui.updateConsole(L">> Data " + std::to_wstring(idx) + L" : " + hex_high + hex_low);*/
+			TThread::Synchronize(0,
+				[this, idx, dataSize] () -> void {
+					ui.updateProgressBar(static_cast<float>(idx)/static_cast<float>(dataSize)*100);
 				}
+			);
+		} else {
+		// TRY
+			if (pcpage < device->getNumberPages()) {
+				/*TThread::Synchronize(thread, [this, idx, dataSize]{
+					ui.updateProgressBar(static_cast<float>(idx)/static_cast<float>(dataSize)*100);
+					ui.updateConsole(L">> ProgressBar: " + std::to_wstring(static_cast<float>(idx)/static_cast<float>(dataSize)*100));
+				});*/
+
+				address = static_cast<uint16_t>(pcpage << 5);
+				memoryPage[1] = static_cast<uint8_t>(address >> 8);
+				memoryPage[2] = static_cast<uint8_t>(address);
+
+				// reset the address of the page buffer
+				pcword = 0;
+
+				// store page
+				writeMemoryPage(memoryPage);
+
+				// wait until ready
+				while(!polling());
+
+				// update the address of the program memory
+				pcpage++;
+				FLAG_PAGE_PROGRAMMED = true;
 			}
 		}
+	}
 
-		if (!FLAG_PAGE_PROGRAMMED) {
+	if (!FLAG_PAGE_PROGRAMMED) {
+		TThread::Synchronize(thread, [this, pcpage]{
 			ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
+		});
 
-			address = static_cast<uint16_t>(pcpage << 5);
-			memoryPage[1] = static_cast<uint8_t>(address >> 8);
-			memoryPage[2] = static_cast<uint8_t>(address);
+		address = static_cast<uint16_t>(pcpage << 5);
+		memoryPage[1] = static_cast<uint8_t>(address >> 8);
+		memoryPage[2] = static_cast<uint8_t>(address);
 
-			// store page
-			writeMemoryPage(memoryPage);
+		// store page
+		writeMemoryPage(memoryPage);
 
-			// wait until ready
-			while(!polling());
-		}
+		// wait until ready
+		while(!polling());
+	}
+	TThread::Synchronize(thread, [this]{
 		ui.updateConsole(L">> Finished programming device...");
-		//verifyFlash();
-	})->Start();
+	});
+
+	//verifyFlash();
 }
 
 void AVRProgrammer::verifyFlash() {
