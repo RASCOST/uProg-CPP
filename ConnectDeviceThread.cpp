@@ -54,7 +54,7 @@ void __fastcall ConnectDeviceThread::Execute()
 	if (nums == 1) {
 		if (Form1->avrprog->programmingEnable()) {
 			Synchronize([] {
-				Form1->updateConsole(L">> Device Synchronized and Verifying if the selected device corresponds to tne connected device.");
+				Form1->updateConsole(L">> Device Synchronized... \n Verifying if the selected device corresponds to the connected device...");
 			});
 			// check if the device connected and selected corresponds
 			if(Form1->avrprog->verifySignature())
