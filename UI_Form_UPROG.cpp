@@ -13,29 +13,7 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner), avrprog(CreateProgrammer(*this))
 {
-	//FT_STATUS status;
-	//DWORD nums;
-
 	OpenDialogFile->Filter = "Hex files (*.hex)|*.HEX";
-
-	//status = FT_CreateDeviceInfoList(&nums);
-	//std::wstring message = L">> ";
-
-	// check if device connected
-	/*if (nums == 1) {
-		message += L"Detected Device: 1";
-	} else if (nums == 0) {
-		message += L"Detected Device: 0! Please connect your device.";
-	} else {
-		message += L"Detected more than one device! Please remove your devices and try again.";
-	}
-
-	updateConsole(message.c_str());
-
-	if (nums == 1) {
-		if (avrprog->programmingEnable())
-			updateConsole(L">> Device Synchronized");
-	}*/
 }
 //---------------------------------------------------------------------------
 
@@ -175,52 +153,13 @@ void __fastcall TForm1::CBxDeviceChange(TObject *Sender) {
 	updateConsole(L">> Device choosed: " + name);
 	avrprog->setDeviceName(name);
 
-	// check if there is a device connected
-	/*FT_STATUS status;
-	DWORD nums;
-
-    status = FT_CreateDeviceInfoList(&nums);
-	std::wstring message = L">> ";
-
-    if (nums == 1) {
-		message += L"Detected Device: 1";
-	} else if (nums == 0) {
-		message += L"Detected Device: 0! Please connect your device.";
-	} else {
-		message += L"Detected more than one device! Please remove your devices and try again.";
-	}
-
-	updateConsole(message);
-
-	// Execute command enable programming
-	if (nums == 1) {
-		if (avrprog->programmingEnable()) {
-			updateConsole(L">> Device Synchronized");
-			updateConsole(L">> Verifying if the selected device corresponds to tne connected device.");
-
-			// check if the device connected and selected corresponds
-			if(avrprog->verifySignature())
-				updateConsole(L">> Device corresponds!");
-			else
-                updateConsole(L">> Device do not corresponds!");
-		} else {
-			updateConsole(L">> Device Not Synchronized");
-        }
-	}*/
 	ConnectDeviceThread *connectDeviceThread = new ConnectDeviceThread(false);
 }
 
 
 void __fastcall TForm1::BtnWriteFlashClick(TObject *Sender)
 {
-	/*TTask::Run(
-		[this]() -> void {
-			avrprog->writeFlash();
-		}
-
-	); */
-    WriteFlashThread *writeFlashThread = new WriteFlashThread(false);
-
+	WriteFlashThread *writeFlashThread = new WriteFlashThread(false);
 }
 //---------------------------------------------------------------------------
 
