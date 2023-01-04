@@ -342,10 +342,6 @@ void AVRProgrammer::writeFlash(TThread* thread) {
 	});
 
 	while ( idx < dataSize) {
-		/*TThread::Synchronize(thread, [this, pcpage, pcword]{
-			ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage) + L"... " + std::to_wstring((pcword/32.0)*100) + L"%");;
-		});*/
-
 		if (pcword < device->getPageSize()) {
 			// prepare the address
 			lowByte[2] = pcword;
@@ -376,11 +372,6 @@ void AVRProgrammer::writeFlash(TThread* thread) {
 		} else {
 		// TRY
 			if (pcpage < device->getNumberPages()) {
-				/*TThread::Synchronize(thread, [this, idx, dataSize]{
-					ui.updateProgressBar(static_cast<float>(idx)/static_cast<float>(dataSize)*100);
-					ui.updateConsole(L">> ProgressBar: " + std::to_wstring(static_cast<float>(idx)/static_cast<float>(dataSize)*100));
-				});*/
-
 				address = static_cast<uint16_t>(pcpage << 5);
 				memoryPage[1] = static_cast<uint8_t>(address >> 8);
 				memoryPage[2] = static_cast<uint8_t>(address);
@@ -402,10 +393,6 @@ void AVRProgrammer::writeFlash(TThread* thread) {
 	}
 
 	if (!FLAG_PAGE_PROGRAMMED) {
-		TThread::Synchronize(thread, [this, pcpage]{
-			ui.updateConsole(L">> Writing page: " + std::to_wstring(pcpage));
-		});
-
 		address = static_cast<uint16_t>(pcpage << 5);
 		memoryPage[1] = static_cast<uint8_t>(address >> 8);
 		memoryPage[2] = static_cast<uint8_t>(address);
@@ -465,12 +452,6 @@ void AVRProgrammer::verifyFlash() {
 	}
 
 	for (uint16_t idx = 0; idx < file.size(); idx++) {
-		/*std::wstring f = IntToHex(file[idx]).c_str(); //std::wstring(IntToHex(file[idx]).begin(), IntToHex(file[idx]).end());
-		std::wstring p = IntToHex(program[idx]).c_str(); //std::wstring(IntToHex(program[idx]).begin(), IntToHex(program[idx]).end());
-		ui.updateConsole(L"file: " +  f
-			+
-			L" -- memory: " + p
-			); */
 		if (file[idx] != program[idx]) {
 			ui.updateConsole(L">> Memory and file do not correspond!");
 			break;
